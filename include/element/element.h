@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------
 
 #include "../dependencies.h"
+#include "param.h"
 #include "texture.h"
 
 // ---------------------------------------------------------------------
@@ -26,6 +27,10 @@ typedef struct oh_element oh_element;
 struct oh_element {
 	// An element can be snapped to another element (knob to a window)
 	oh_element *snap;
+
+	// Optional Params
+	oh_element_param *param;
+	oh_element_param_str *param_str;
 
 	// Keeps track of snapped elements
 	oh_element **snapped;
@@ -60,11 +65,24 @@ struct oh_element {
 // Initializes an interface element
 // activity - OH_ELEMENT_STATIC / OH_ELEMENT_DYNAMIC
 // snap - can be set to NULL
+// In case of useParam, expects
+// 		int32_t x, int32_t y,
+// 		oh_param_mode mode,
+// 		uint8_t r, uint8_t g, uint8_t b, uint8_t a
+// In case of useParamStr, expects
+// 		int32_t x, int32_t y,
+// 		uint8_t r, uint8_t g, uint8_t b, uint8_t a
 int32_t oh_element_init(
 	oh_element *element,
 	oh_element *snap,
 	oh_element_texture_type texture_type,
-	uint8_t activity);
+	uint8_t activity,
+
+	int32_t useParam,
+	int32_t useParamStr,
+
+	...
+);
 
 // Similar to oh_element_init() but also allocates the element on the heap
 // oh_element *oh_element_get(

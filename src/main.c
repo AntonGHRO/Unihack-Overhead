@@ -16,10 +16,6 @@ static oh_worksheet worksheet;
 extern int32_t oh_control_x();
 extern int32_t oh_control_y();
 
-// Delete
-oh_element element;
-oh_element_param *param;
-
 // ============================================ INIT ============================================
 int32_t oh_init() {
 	// Set grid width and color
@@ -31,12 +27,6 @@ int32_t oh_init() {
 
 	// Font size
 	oh_dependencies_set_ttf_font_size(20);
-
-	// Delete
-	oh_element_init(&element, NULL, OH_ELEMENT_TEXTURE_WIN_200x200, OH_ELEMENT_ACTIVITY_DYNAMIC);
-	param = oh_element_param_get(0, 0, OH_ELEMENT_PARAM_MODE_NORMAL, 0, 0, 0, 255);
-
-	// oh_element_set_interaction(&element, 24, 24, 340, 25);
 
 	return OH_TRUE;
 }
@@ -50,15 +40,8 @@ int32_t oh_event(SDL_Event event) {
 // ============================================ UPDATE ============================================
 int32_t oh_update() {
 
-	oh_element_param_render(param);
-	oh_element_render(&element);
-
 	int32_t x, y;
 	SDL_GetMouseState(&x, &y);
-
-	if(oh_element_is_inside(&element, x + oh_control_x(), y + oh_control_y()) == 1) {
-		oh_element_set_position(&element, element.position.x + 1, element.position.y);
-	}
 
 	return OH_TRUE;
 }

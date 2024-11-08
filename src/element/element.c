@@ -1,7 +1,4 @@
 #include "../../include/element/element.h"
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_stdinc.h>
-
 // ---------------------------------------------------------------------------------------------------------------------------------
 
 // To avoid circular dependency
@@ -13,8 +10,13 @@ int32_t oh_element_init(
 	oh_element *element,
 	oh_element *snap,
 	oh_element_texture_type texture_type,
-	uint8_t activity)
-{
+	uint8_t activity,
+
+	int32_t useParam,
+	int32_t useParamStr,
+
+	...
+) {
 	if(activity != 0 && activity != 1) {
 		oh_log(OH_LOG_ERROR, "oh_element_init(): Invalid range for activity. Expected OH_ELEMENT_(STATIC/DYNAMIC)");
 		return OH_FALSE;
@@ -29,6 +31,7 @@ int32_t oh_element_init(
 	element->interact.x = 0;
 	element->interact.y = 0;
 
+	// Hardcoded elements for special textures
 	switch(texture_type) {
 	case OH_ELEMENT_TEXTURE_WIN_200x200:
 		element->interact.x = 24;
@@ -39,13 +42,37 @@ int32_t oh_element_init(
 	case OH_ELEMENT_TEXTURE_WIN_300x300:
 		element->interact.x = 24;
 		element->interact.y = 24;
-		element->interact.w = 340;
+		element->interact.w = 240;
 		element->interact.h = 25;
 		break;
 	case OH_ELEMENT_TEXTURE_WIN_400x400:
 		element->interact.x = 24;
 		element->interact.y = 24;
 		element->interact.w = 340;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_600x600:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 540;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_800x800:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 740;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_1200x670:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 1140;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_1800x1000:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 1740;
 		element->interact.h = 25;
 		break;
 	}

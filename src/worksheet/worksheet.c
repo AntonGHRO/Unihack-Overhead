@@ -78,7 +78,7 @@ int32_t oh_worksheet_create_element(
 		// Initialize the new element
 		if(oh_element_init(
 			ws->static_element + (ws->static_size ++),
-			snap, texture_type, activity) == OH_FALSE)
+			snap, texture_type, activity, 0, 0) == OH_FALSE)
 		{
 			oh_log(OH_LOG_ERROR, "oh_worksheet_create_element(), ws:%s: Failed to initialize new element", ws->name);
 			ws->static_size --;
@@ -103,7 +103,7 @@ int32_t oh_worksheet_create_element(
 		// Initialize the new element
 		if(oh_element_init(
 			ws->dynamic_element + (ws->dynamic_size ++),
-			snap, texture_type, activity) == OH_FALSE)
+			snap, texture_type, activity, 0, 0) == OH_FALSE)
 		{
 			oh_log(OH_LOG_ERROR, "oh_worksheet_create_element(), ws:%s: Failed to initialize new element", ws->name);
 			ws->dynamic_size --;
