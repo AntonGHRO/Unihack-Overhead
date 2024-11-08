@@ -1,6 +1,4 @@
 #include "../../include/element/param.h"
-#include <SDL2/SDL_render.h>
-#include <stdint.h>
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -36,25 +34,53 @@ oh_element_param *oh_element_param_get(int32_t x, int32_t y, oh_param_mode mode,
 	return param;
 }
 
-void oh_element_param_set_val(oh_element_param *param, long double value) {
+int32_t oh_element_param_set_val(oh_element_param *param, long double value) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_set_val(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	param->data_old = param->data;
 	param->data = value;
+
+	return OH_TRUE;
 }
 
-void oh_element_param_set_mode(oh_element_param *param, oh_param_mode mode) {
+int32_t oh_element_param_set_mode(oh_element_param *param, oh_param_mode mode) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_set_mode(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	param->mode = mode;
+
+	return OH_TRUE;
 }
 
-void oh_element_param_set_color (oh_element_param *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+int32_t oh_element_param_set_color (oh_element_param *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_set_color(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	param->color.r = r;
 	param->color.g = g;
 	param->color.b = b;
 	param->color.a = a;
+
+	return OH_TRUE;
 }
 
-void oh_element_param_set_pos(oh_element_param *param, int32_t x, int32_t y) {
+int32_t oh_element_param_set_pos(oh_element_param *param, int32_t x, int32_t y) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_set_pos(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	param->rect.x = x;
 	param->rect.y = y;
+
+	return OH_TRUE;
 }
 
 int32_t oh_element_param_render(oh_element_param *param) {
@@ -63,7 +89,27 @@ int32_t oh_element_param_render(oh_element_param *param) {
 	if(param->texture == NULL || param->data != param->data_old) {
 		param->data_old = param->data;
 
-		snprintf(string, 1024, "%.2Lf", param->data_old);
+		if(param->mode == OH_ELEMENT_PARAM_MODE_NORMAL) {
+			snprintf(string, 1024, "%.2Lf", param->data_old);
+		} else if(param->mode == OH_ELEMENT_PARAM_MODE_HEXADEC) {
+			if(param->data_old >= 0) {
+				snprintf(string, 1024, "0x%X.0x%X", (uint32_t)param->data_old, (uint32_t)roundf(((float)(param->data_old - (uint32_t)param->data_old)) * 100));
+			} else {
+				snprintf(string, 1024, "-0x%X.0x%X", (uint32_t)-param->data_old, (uint32_t)roundf(((float)(-param->data_old - (uint32_t)-param->data_old)) * 100));
+			}
+		} else {
+			if(param->data_old >= 0) {
+				strncat(string, "0b", 3);
+				SDL_itoa((uint32_t)param->data_old, string + 2, 2);
+				strncat(string, ".0b", 4);
+				SDL_itoa((uint32_t)roundf(((float)(param->data_old - (uint32_t)param->data_old)) * 100), string + strlen(string), 2);
+			} else {
+				strncat(string, "-0b", 4);
+				SDL_itoa((uint32_t)-param->data_old, string + 2, 2);
+				strncat(string, ".0b", 4);
+				SDL_itoa((uint32_t)roundf(((float)(-param->data_old - (uint32_t)-param->data_old)) * 100), string + strlen(string), 2);
+			}
+		}
 
 		SDL_Surface *surface = TTF_RenderText_Blended(oh_dependencies_get_font(), string, param->color);
 
@@ -185,16 +231,30 @@ int32_t oh_element_param_str_set_str(oh_element_param_str *param, const char *da
 	return OH_TRUE;
 }
 
-void oh_element_param_str_set_color(oh_element_param_str *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+int32_t oh_element_param_str_set_color(oh_element_param_str *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_str_set_color(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	param->color.r = r;
 	param->color.g = g;
 	param->color.b = b;
 	param->color.a = a;
+
+	return OH_TRUE;
 }
 
-void oh_element_param_str_set_pos(oh_element_param_str *param, int32_t x, int32_t y) {
+int32_t oh_element_param_str_set_pos(oh_element_param_str *param, int32_t x, int32_t y) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_str_set_pos(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	param->rect.x = x;
 	param->rect.y = y;
+	
+	return OH_TRUE;
 }
 
 int32_t oh_element_param_str_render(oh_element_param_str *param) {

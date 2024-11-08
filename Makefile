@@ -15,7 +15,7 @@ RELEASE_BUILD_DIR = $(BUILD_DIR)/release
 
 # Compiler flags
 CFLAGS = -Wall -Wextra -MMD -MP
-LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_image
+LDFLAGS = -lSDL2 -lSDL2_ttf -lSDL2_image -lm
 
 # Source files (recursive)
 SRC_FILES = $(call rwildcard, $(SRC_DIR), *.c)

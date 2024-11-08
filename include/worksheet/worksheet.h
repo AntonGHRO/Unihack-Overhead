@@ -51,6 +51,7 @@ typedef struct {
 } oh_worksheet;
 
 // ---------------------------------------------------------------------
+
 // Initializes a worksheet (should comunicate with "map")
 int32_t oh_worksheet_init(oh_worksheet *ws, const char *name);
 
@@ -62,3 +63,5 @@ int32_t oh_worksheet_create_element(
 	uint8_t activity);
 
 #endif
+
+// ---------------------------------------------------------------------

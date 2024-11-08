@@ -7,7 +7,6 @@
 // Grid, Worksheet etc
 #include "../include/worksheet/grid.h"
 #include "../include/worksheet/worksheet.h"
-#include <SDL2/SDL_mouse.h>
 
 // For now, only gonna be using one worksheet
 static oh_worksheet worksheet;
@@ -15,6 +14,9 @@ static oh_worksheet worksheet;
 // To avoid circular dependency hehe
 extern int32_t oh_control_x();
 extern int32_t oh_control_y();
+
+// Test
+oh_element element;
 
 // ============================================ INIT ============================================
 int32_t oh_init() {
@@ -28,6 +30,18 @@ int32_t oh_init() {
 	// Font size
 	oh_dependencies_set_ttf_font_size(20);
 
+	// Test
+	oh_element_init(
+		&element, NULL,
+		OH_ELEMENT_TEXTURE_WIN_600x600,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
+		200, 25, OH_ELEMENT_PARAM_MODE_BINARY, 255, 0, 0, 255,
+		30, 25, 0, 0, 0, 255
+	);
+
+	oh_element_param_str_set_str(element.param_str, "Hello World");
+	oh_element_param_set_val(element.param, -12.1);
+
 	return OH_TRUE;
 }
 
@@ -39,9 +53,8 @@ int32_t oh_event(SDL_Event event) {
 
 // ============================================ UPDATE ============================================
 int32_t oh_update() {
-
-	int32_t x, y;
-	SDL_GetMouseState(&x, &y);
+	// Test
+	oh_element_render(&element);
 
 	return OH_TRUE;
 }

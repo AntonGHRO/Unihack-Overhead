@@ -36,10 +36,10 @@ typedef struct {
 } oh_element_param;
 
 oh_element_param 	*oh_element_param_get 			(int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-void 				oh_element_param_set_val 		(oh_element_param *param, long double value);
-void 				oh_element_param_set_mode 		(oh_element_param *param, oh_param_mode mode);
-void 				oh_element_param_set_color 		(oh_element_param *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-void 				oh_element_param_set_pos 		(oh_element_param *param, int32_t x, int32_t y);
+int32_t 			oh_element_param_set_val 		(oh_element_param *param, long double value);
+int32_t				oh_element_param_set_mode 		(oh_element_param *param, oh_param_mode mode);
+int32_t 			oh_element_param_set_color 		(oh_element_param *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+int32_t 			oh_element_param_set_pos 		(oh_element_param *param, int32_t x, int32_t y);
 int32_t 			oh_element_param_render  		(oh_element_param *param);
 
 // ---------------------------------------------------------------------
@@ -63,8 +63,8 @@ typedef struct {
 
 oh_element_param_str 	*oh_element_param_str_get 		(int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 int32_t 				oh_element_param_str_set_str 	(oh_element_param_str *param, const char *data);
-void 					oh_element_param_str_set_color 	(oh_element_param_str *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-void 					oh_element_param_str_set_pos 	(oh_element_param_str *param, int32_t x, int32_t y);
+int32_t 				oh_element_param_str_set_color 	(oh_element_param_str *param, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+int32_t 				oh_element_param_str_set_pos 	(oh_element_param_str *param, int32_t x, int32_t y);
 int32_t 				oh_element_param_str_render 	(oh_element_param_str *param);
 
 // ---------------------------------------------------------------------

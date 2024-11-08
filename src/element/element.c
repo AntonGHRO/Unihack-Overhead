@@ -22,6 +22,10 @@ int32_t oh_element_init(
 		return OH_FALSE;
 	}
 
+	// Params default off 
+	element->param = NULL;
+	element->param_str = NULL;
+
 	// Texture
 	element->texture = oh_element_texture(texture_type);
 
@@ -30,6 +34,10 @@ int32_t oh_element_init(
 	element->interact.h = element->texture->surface->h;
 	element->interact.x = 0;
 	element->interact.y = 0;
+
+	// Disable -Wswitch warning
+	#pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wswitch"
 
 	// Hardcoded elements for special textures
 	switch(texture_type) {
@@ -76,6 +84,9 @@ int32_t oh_element_init(
 		element->interact.h = 25;
 		break;
 	}
+
+	// Restore the previous diagnostic state
+	#pragma GCC diagnostic pop
 
 	// Position
 	element->position.x = 0;
@@ -126,6 +137,78 @@ int32_t oh_element_init(
 
 	// Angle
 	element->angle = 0.0;
+
+	// Params stuff
+	if(useParam == 1 || useParamStr == 1) {
+		va_list list;
+		va_start(list, useParamStr);
+
+		if(useParam == 1 && useParamStr == 0) {
+			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x = va_arg(list, int) + element->position.x;
+			int32_t y = va_arg(list, int) + element->position.y;
+			oh_param_mode mode = va_arg(list, int);
+			uint8_t r = va_arg(list, int);
+			uint8_t g = va_arg(list, int);
+			uint8_t b = va_arg(list, int);
+			uint8_t a = va_arg(list, int);
+
+			if((element->param = oh_element_param_get(x, y, mode, r, g, b, a)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init(): oh_element_param_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+		} else if(useParam == 0 && useParamStr == 1) {
+			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x = va_arg(list, int) + element->position.x;
+			int32_t y = va_arg(list, int) + element->position.y;
+			uint8_t r = va_arg(list, int);
+			uint8_t g = va_arg(list, int);
+			uint8_t b = va_arg(list, int);
+			uint8_t a = va_arg(list, int);
+
+			if((element->param_str = oh_element_param_str_get(x, y, r, g, b, a)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init(): oh_element_param_str_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+		} else if(useParam == 1 && useParamStr == 1) {
+			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x = va_arg(list, int) + element->position.x;
+			int32_t y = va_arg(list, int) + element->position.y;
+			oh_param_mode mode = va_arg(list, int);
+			uint8_t r = va_arg(list, int);
+			uint8_t g = va_arg(list, int);
+			uint8_t b = va_arg(list, int);
+			uint8_t a = va_arg(list, int);
+
+			if((element->param = oh_element_param_get(x, y, mode, r, g, b, a)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init(): oh_element_param_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+
+			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x_str = va_arg(list, int) + element->position.x;
+			int32_t y_str = va_arg(list, int) + element->position.y;
+			uint8_t r_str = va_arg(list, int);
+			uint8_t g_str = va_arg(list, int);
+			uint8_t b_str = va_arg(list, int);
+			uint8_t a_str = va_arg(list, int);
+
+			if((element->param_str = oh_element_param_str_get(x_str, y_str, r_str, g_str, b_str, a_str)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init(): oh_element_param_str_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+		}
+
+		va_end(list);
+	}
 
 	return OH_TRUE;
 }
@@ -235,6 +318,15 @@ int32_t oh_element_render(oh_element *element) {
 				oh_log(OH_LOG_ERROR, "oh_element_render(): Static oh_element_render_ex() failed for snapped element: %u", i);
 			}
 		}
+	}
+
+	// Render params
+	if(element->param != NULL) {
+		oh_element_param_render(element->param);
+	}
+
+	if(element->param_str != NULL) {
+		oh_element_param_str_render(element->param_str);
 	}
 
 	return OH_TRUE;
