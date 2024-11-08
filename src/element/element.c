@@ -1,4 +1,6 @@
 #include "../../include/element/element.h"
+#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_stdinc.h>
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -27,9 +29,30 @@ int32_t oh_element_init(
 	element->interact.x = 0;
 	element->interact.y = 0;
 
+	switch(texture_type) {
+	case OH_ELEMENT_TEXTURE_WIN_200x200:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 140;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_300x300:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 340;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_400x400:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 340;
+		element->interact.h = 25;
+		break;
+	}
+
 	// Position
-	element->position.x = oh_dependencies_get_display_mode().w / 2 - element->interact.w / 2;
-	element->position.y = oh_dependencies_get_display_mode().h / 2 - element->interact.h / 2;
+	element->position.x = 0;
+	element->position.y = 0;
 
 	// Snap offset
 	element->snap_offset.x = 0;
@@ -258,6 +281,19 @@ void oh_element_set_interaction(oh_element *element, int32_t x, int32_t y, int32
 
 void oh_element_set_angle (oh_element *element, double angle) {
 	element->angle = angle;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+int32_t oh_element_is_inside(oh_element *element, int32_t x, int32_t y) {
+	// SDL_Point point = {x + oh_control_x(), y + oh_control_y()};
+	SDL_Point point = {x, y};
+	SDL_Rect rect = element->interact;
+
+	rect.x += element->position.x;
+	rect.y += element->position.y;
+
+	return SDL_PointInRect(&point, &rect);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------

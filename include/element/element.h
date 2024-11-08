@@ -91,6 +91,8 @@ int32_t oh_element_set_snap_offset 	(oh_element *element, int32_t x, int32_t y);
 void 	oh_element_set_interaction 	(oh_element *element, int32_t x, int32_t y, int32_t w, int32_t h);
 void 	oh_element_set_angle 		(oh_element *element, double angle);
 
+int32_t oh_element_is_inside 		(oh_element *element, int32_t x, int32_t y);
+
 // ---------------------------------------------------------------------
 
 #endif
