@@ -1,0 +1,16 @@
+# Ignore binaries, dependencies
+bin/
+build/
+
+# Ignore all .o, .obj, and binary output files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# Do not ignore this file
+!.gitignore
