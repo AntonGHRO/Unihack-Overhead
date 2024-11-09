@@ -3,6 +3,7 @@
 
 // ---------------------------------------------------------------------
 
+// Standard
 #include <stdint.h>
 
 // Logging
@@ -50,5 +51,16 @@ void oh_control_set_y(int32_t y);
 // Returns the canvas position
 int32_t oh_control_x();
 int32_t oh_control_y();
+
+// Returns mouse position in infinite grid
+int32_t oh_control_cursor_x();
+int32_t oh_control_cursor_y();
+
+// Set a worksheet to work on
+int32_t oh_control_set_worksheet(oh_worksheet *ws);
+
+// ---------------------------------------------------------------------
+
+int32_t oh_control_worksheet_update_states();
 
 #endif

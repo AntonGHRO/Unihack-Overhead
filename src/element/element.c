@@ -213,6 +213,209 @@ int32_t oh_element_init(
 	return OH_TRUE;
 }
 
+// Same as above, just with args
+int32_t oh_element_init_ex(
+	oh_element *element,
+	oh_element *snap,
+	oh_element_texture_type texture_type,
+	uint8_t activity,
+
+	int32_t useParam,
+	int32_t useParamStr,
+
+	va_list list
+) {
+	if(activity != 0 && activity != 1) {
+		oh_log(OH_LOG_ERROR, "oh_element_init_ex(): Invalid range for activity. Expected OH_ELEMENT_(STATIC/DYNAMIC)");
+		return OH_FALSE;
+	}
+
+	// Params default off 
+	element->param = NULL;
+	element->param_str = NULL;
+
+	// Texture
+	element->texture = oh_element_texture(texture_type);
+
+	// Default for interact box
+	element->interact.w = element->texture->surface->w;
+	element->interact.h = element->texture->surface->h;
+	element->interact.x = 0;
+	element->interact.y = 0;
+
+	// Disable -Wswitch warning
+	#pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wswitch"
+
+	// Hardcoded elements for special textures
+	switch(texture_type) {
+	case OH_ELEMENT_TEXTURE_WIN_200x200:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 140;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_300x300:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 240;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_400x400:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 340;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_600x600:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 540;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_800x800:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 740;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_1200x670:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 1140;
+		element->interact.h = 25;
+		break;
+	case OH_ELEMENT_TEXTURE_WIN_1800x1000:
+		element->interact.x = 24;
+		element->interact.y = 24;
+		element->interact.w = 1740;
+		element->interact.h = 25;
+		break;
+	}
+
+	// Restore the previous diagnostic state
+	#pragma GCC diagnostic pop
+
+	// Position
+	element->position.x = 0;
+	element->position.y = 0;
+
+	// Snap offset
+	element->snap_offset.x = 0;
+	element->snap_offset.y = 0;
+
+	// Snap
+	element->snap = snap;
+
+	// Check if we acutally snapped to another element
+	if(snap != NULL) {
+		// Increase the snapped count of the other element
+		snap->snapped_count ++;
+
+		// If yes, check if that element has any snapped elements
+		if(snap->snapped != NULL) {
+			oh_element **aux = realloc(snap->snapped, oh_utils_math_nextpow2(snap->snapped_count) * sizeof(oh_element *));
+
+			if(aux == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init_ex(): Failed to reallocate buffer of snapped elements of element 'snap'");
+				return OH_FALSE;
+			}
+
+			snap->snapped = aux;
+			snap->snapped[snap->snapped_count - 1] = element;
+		} else {
+			// If no, allocate memory and save this element to its snapped elements
+			snap->snapped = malloc(sizeof(oh_element *));
+			snap->snapped[0] = element;
+		}
+
+		// At the end if all went well, update the position to be an offset of the snap
+		element->position.x = snap->position.x;
+		element->position.y = snap->position.y;
+	}
+
+	// Snapped
+	element->snapped = NULL;
+
+	// Activity
+	element->activity = activity;
+
+	// State
+	element->state = OH_ELEMENT_NORMAL;
+
+	// Angle
+	element->angle = 0.0;
+
+	// Params stuff
+	if(useParam == 1 || useParamStr == 1) {
+		if(useParam == 1 && useParamStr == 0) {
+			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x = va_arg(list, int) + element->position.x;
+			int32_t y = va_arg(list, int) + element->position.y;
+			oh_param_mode mode = va_arg(list, int);
+			uint8_t r = va_arg(list, int);
+			uint8_t g = va_arg(list, int);
+			uint8_t b = va_arg(list, int);
+			uint8_t a = va_arg(list, int);
+
+			if((element->param = oh_element_param_get(x, y, mode, r, g, b, a)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init_ex(): oh_element_param_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+		} else if(useParam == 0 && useParamStr == 1) {
+			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x = va_arg(list, int) + element->position.x;
+			int32_t y = va_arg(list, int) + element->position.y;
+			uint8_t r = va_arg(list, int);
+			uint8_t g = va_arg(list, int);
+			uint8_t b = va_arg(list, int);
+			uint8_t a = va_arg(list, int);
+
+			if((element->param_str = oh_element_param_str_get(x, y, r, g, b, a)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init_ex(): oh_element_param_str_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+		} else if(useParam == 1 && useParamStr == 1) {
+			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x = va_arg(list, int) + element->position.x;
+			int32_t y = va_arg(list, int) + element->position.y;
+			oh_param_mode mode = va_arg(list, int);
+			uint8_t r = va_arg(list, int);
+			uint8_t g = va_arg(list, int);
+			uint8_t b = va_arg(list, int);
+			uint8_t a = va_arg(list, int);
+
+			if((element->param = oh_element_param_get(x, y, mode, r, g, b, a)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init_ex(): oh_element_param_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+
+			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
+
+			int32_t x_str = va_arg(list, int) + element->position.x;
+			int32_t y_str = va_arg(list, int) + element->position.y;
+			uint8_t r_str = va_arg(list, int);
+			uint8_t g_str = va_arg(list, int);
+			uint8_t b_str = va_arg(list, int);
+			uint8_t a_str = va_arg(list, int);
+
+			if((element->param_str = oh_element_param_str_get(x_str, y_str, r_str, g_str, b_str, a_str)) == NULL) {
+				oh_log(OH_LOG_ERROR, "oh_element_init_ex(): oh_element_param_str_get() failed");
+				va_end(list);
+				return OH_FALSE;
+			}
+		}
+	}
+
+	return OH_TRUE;
+}
+
 // ---------------------------------------------------------------------------------------------------------------------------------
 static int32_t oh_element_render_ex(oh_element *element) {
 	if(element == NULL) {
@@ -405,7 +608,6 @@ void oh_element_set_angle (oh_element *element, double angle) {
 // ---------------------------------------------------------------------------------------------------------------------------------
 
 int32_t oh_element_is_inside(oh_element *element, int32_t x, int32_t y) {
-	// SDL_Point point = {x + oh_control_x(), y + oh_control_y()};
 	SDL_Point point = {x, y};
 	SDL_Rect rect = element->interact;
 

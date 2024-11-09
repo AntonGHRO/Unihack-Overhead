@@ -14,9 +14,9 @@ static oh_worksheet worksheet;
 // To avoid circular dependency hehe
 extern int32_t oh_control_x();
 extern int32_t oh_control_y();
-
-// Test
-oh_element element;
+extern int32_t oh_control_cursor_x();
+extern int32_t oh_control_cursor_y();
+extern int32_t oh_control_set_worksheet(oh_worksheet *ws);
 
 // ============================================ INIT ============================================
 int32_t oh_init() {
@@ -24,23 +24,26 @@ int32_t oh_init() {
 	oh_worksheet_grid_set_width(1);
 	oh_worksheet_grid_set_color(0, 0, 0, 255);
 
-	// Worksheet
-	oh_worksheet_init(&worksheet, "main");
-
 	// Font size
 	oh_dependencies_set_ttf_font_size(20);
 
-	// Test
-	oh_element_init(
-		&element, NULL,
-		OH_ELEMENT_TEXTURE_WIN_600x600,
-		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
-		200, 25, OH_ELEMENT_PARAM_MODE_BINARY, 255, 0, 0, 255,
-		30, 25, 0, 0, 0, 255
-	);
+	// Worksheet
+	oh_worksheet_init(&worksheet, "main");
 
-	oh_element_param_str_set_str(element.param_str, "Hello World");
-	oh_element_param_set_val(element.param, -12.1);
+	oh_worksheet_create_element(
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_400x400,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+
+	oh_worksheet_create_element(
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_600x600,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+
+	oh_element_set_position(worksheet.dynamic_element + 1, 500, 500);
+
+	// Set worksheet to work on
+	oh_control_set_worksheet(&worksheet);
 
 	return OH_TRUE;
 }
@@ -53,8 +56,7 @@ int32_t oh_event(SDL_Event event) {
 
 // ============================================ UPDATE ============================================
 int32_t oh_update() {
-	// Test
-	oh_element_render(&element);
+	oh_worksheet_render(&worksheet);
 
 	return OH_TRUE;
 }

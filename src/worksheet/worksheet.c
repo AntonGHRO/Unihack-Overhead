@@ -1,5 +1,4 @@
 #include "../../include/worksheet/worksheet.h"
-#include <stdlib.h>
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 int32_t oh_worksheet_init(oh_worksheet *ws, const char *name) {
@@ -20,6 +19,9 @@ int32_t oh_worksheet_init(oh_worksheet *ws, const char *name) {
 
 	// Desc NULL
 	ws->desc = NULL;
+
+	// Hover element
+	ws->hover = NULL;
 
 	// Canvas position starts at 0
 	ws->x = 0;
@@ -57,10 +59,24 @@ int32_t oh_worksheet_init(oh_worksheet *ws, const char *name) {
 // --------------------------------------------------------------------------------------------------------------------------------------
 int32_t oh_worksheet_create_element(
 	oh_worksheet *ws,
+
 	oh_element *snap,
 	oh_element_texture_type texture_type,
-	uint8_t activity)
-{
+	uint8_t activity,
+
+	int32_t useParam,
+	int32_t useParamStr,
+
+	...
+) {
+	if(ws == NULL) {
+		oh_log(OH_LOG_WARN, "oh_worksheet_create_element(): Passed NULL worksheet");
+		return OH_FALSE;
+	}
+
+	va_list list;
+	va_start(list, useParamStr);
+
 	// Create static element
 	if(activity == OH_ELEMENT_ACTIVITY_STATIC) {
 		// Check if static buffer is full
@@ -76,16 +92,18 @@ int32_t oh_worksheet_create_element(
 		}
 
 		// Initialize the new element
-		if(oh_element_init(
+		if(oh_element_init_ex(
 			ws->static_element + (ws->static_size ++),
-			snap, texture_type, activity, 0, 0) == OH_FALSE)
+			snap, texture_type, activity, useParam, useParamStr, list) == OH_FALSE)
 		{
 			oh_log(OH_LOG_ERROR, "oh_worksheet_create_element(), ws:%s: Failed to initialize new element", ws->name);
 			ws->static_size --;
 			return OH_FALSE;
 		}
 
+		va_end(list);
 		return OH_TRUE;
+
 	// Create dynamic element
 	} else if(activity == OH_ELEMENT_ACTIVITY_DYNAMIC) {
 		// Check if dynamic buffer is full
@@ -101,18 +119,43 @@ int32_t oh_worksheet_create_element(
 		}
 
 		// Initialize the new element
-		if(oh_element_init(
+		if(oh_element_init_ex(
 			ws->dynamic_element + (ws->dynamic_size ++),
-			snap, texture_type, activity, 0, 0) == OH_FALSE)
+			snap, texture_type, activity, useParam, useParamStr, list) == OH_FALSE)
 		{
 			oh_log(OH_LOG_ERROR, "oh_worksheet_create_element(), ws:%s: Failed to initialize new element", ws->name);
 			ws->dynamic_size --;
 			return OH_FALSE;
 		}
 
+		va_end(list);
 		return OH_TRUE;
 	}
 
 	oh_log(OH_LOG_ERROR, "oh_worksheet_create_element(), ws:%s: Passed invalid range for activity", ws->name);
+	va_end(list);
 	return OH_FALSE;
+}
+
+int32_t oh_worksheet_render(oh_worksheet *ws) {
+	if(ws == NULL) {
+		oh_log(OH_LOG_WARN, "oh_worksheet_render(): Passed NULL worksheet");
+		return OH_FALSE;
+	}
+
+	for(uint32_t i = 0; i < ws->static_size; i ++) {
+		if(oh_element_render(ws->static_element + i) == OH_FALSE) {
+			oh_log(OH_LOG_WARN, "oh_worksheet_render(): oh_element_render() static failed");
+			return OH_FALSE;
+		}
+	}
+
+	for(uint32_t i = 0; i < ws->dynamic_size; i ++) {
+		if(oh_element_render(ws->dynamic_element + i) == OH_FALSE) {
+			oh_log(OH_LOG_WARN, "oh_worksheet_render(): oh_element_render() dynamic failed");
+			return OH_FALSE;
+		}
+	}
+
+	return OH_TRUE;
 }

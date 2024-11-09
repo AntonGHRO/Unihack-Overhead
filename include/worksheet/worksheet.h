@@ -37,6 +37,9 @@ typedef struct {
 	uint32_t dynamic_size;
 	uint32_t dynamic_cap;
 
+	// Flagged element
+	oh_element *hover;
+
 	// x, y - refers to the canvas position
 	// It is remembered even after closing
 	int32_t x;
@@ -58,9 +61,19 @@ int32_t oh_worksheet_init(oh_worksheet *ws, const char *name);
 // Create an element in the worksheet
 int32_t oh_worksheet_create_element(
 	oh_worksheet *ws,
+
 	oh_element *snap,
 	oh_element_texture_type texture_type,
-	uint8_t activity);
+	uint8_t activity,
+
+	int32_t useParam,
+	int32_t useParamStr,
+
+	...
+);
+
+// Render a worksheet
+int32_t oh_worksheet_render(oh_worksheet *ws);
 
 #endif
 

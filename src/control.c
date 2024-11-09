@@ -1,5 +1,4 @@
 #include "../include/control.h"
-#include <stdlib.h>
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,6 +20,11 @@ static int32_t oh_control_running = 1;
 
 static int32_t oh_x = 0;
 static int32_t oh_y = 0;
+
+static int32_t oh_cursor_x = 0;
+static int32_t oh_cursor_y = 0;
+
+static oh_worksheet *worksheet = NULL;
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,6 +63,7 @@ int32_t main(void) {
 	}
 
 	int32_t moving = 0;
+	int32_t moving_element = 0;
 	int32_t last_x = 0;
 	int32_t last_y = 0;
 
@@ -101,12 +106,38 @@ int32_t main(void) {
 	    		moving = 0;
 	    	}
 
-	    	if(event.type == SDL_MOUSEMOTION && moving) {
-	    		oh_x -= (event.motion.x - last_x);
-	    		oh_y -= (event.motion.y - last_y);
+	    	if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+	    		if(worksheet != NULL) {
+	    			if(worksheet->hover != NULL) {
+	    				moving_element = 1;
+	    				oh_log(OH_LOG_INFO, "main(): Moving element in worksheet %s", worksheet->name);
+	    			}
+	    		}
+	    	}
 
-	    		last_x = event.motion.x;
-	    		last_y = event.motion.y;
+	    	if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT) {
+	    		if(worksheet != NULL) {
+	    			if(worksheet->hover != NULL) {
+	    				moving_element = 0;
+	    			}
+	    		}
+	    	}
+
+	    	if(event.type == SDL_MOUSEMOTION) {
+	    		oh_cursor_x = event.motion.x;
+	    		oh_cursor_y = event.motion.y;
+
+	    		if(moving) {
+	    			oh_x -= (oh_cursor_x - last_x);
+		    		oh_y -= (oh_cursor_y - last_y);
+
+		    		last_x = event.motion.x;
+		    		last_y = event.motion.y;
+	    		}
+
+	    		if(moving_element) {
+	    			oh_element_set_position(worksheet->hover, oh_cursor_x, oh_cursor_y);
+	    		}
 	    	}
 
 	    	// Check event user
@@ -170,5 +201,45 @@ void oh_control_set_y(int32_t y) {
 
 int32_t oh_control_x() { return oh_x; }
 int32_t oh_control_y() { return oh_y; }
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+int32_t oh_control_cursor_x() {
+	return oh_cursor_x + oh_x;
+}
+
+int32_t oh_control_cursor_y() {
+	return oh_cursor_y + oh_y;
+}
+
+int32_t oh_control_set_worksheet(oh_worksheet *ws) {
+	if(ws == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_control_set_worksheet(): Passed NULL worksheet");
+		return OH_FALSE;
+	}
+
+	return OH_TRUE;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+int32_t oh_control_worksheet_update_states() {
+	if(worksheet == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_control_worksheet_update_states(): No worksheet to work on");
+		return OH_FALSE;
+	}
+
+	for(uint32_t i = 0; i < worksheet->dynamic_size; i ++) {
+		if(oh_element_is_inside(worksheet->dynamic_element + i, oh_control_cursor_x(), oh_control_cursor_y())) {
+			worksheet->dynamic_element[i].state = OH_ELEMENT_HOVER;
+			worksheet->hover = worksheet->dynamic_element + i;
+			oh_log(OH_LOG_INFO, "oh_control_worksheet_update_states(): Cursor over element %u", i);
+			return OH_TRUE;
+		}
+	}
+
+	worksheet->hover = NULL;
+	return OH_TRUE;
+}
 
 // --------------------------------------------------------------------------------------------------------------------------------------

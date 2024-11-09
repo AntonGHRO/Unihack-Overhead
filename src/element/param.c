@@ -208,6 +208,11 @@ oh_element_param_str *oh_element_param_str_get(int32_t x, int32_t y, uint8_t r, 
 }
 
 int32_t oh_element_param_str_set_str(oh_element_param_str *param, const char *data) {
+	if(param == NULL) {
+		oh_log(OH_LOG_ERROR, "oh_element_param_str_set_str(): Received NULL param");
+		return OH_FALSE;
+	}
+
 	if(data == NULL) {
 		oh_log(OH_LOG_ERROR, "oh_element_param_str_set_str(): Received NULL data");
 		return OH_FALSE;

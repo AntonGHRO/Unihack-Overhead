@@ -3,7 +3,10 @@
 
 // ---------------------------------------------------------------------
 
+// Dependencies
 #include "../dependencies.h"
+
+// Params, textures
 #include "param.h"
 #include "texture.h"
 
@@ -17,9 +20,6 @@
 typedef enum {
 	OH_ELEMENT_NORMAL,			// Cursor not on top of element
 	OH_ELEMENT_HOVER,			// Cursor is on top of element
-	OH_ELEMENT_MOUSE_DOWN,		// SDL_MOUSEBUTTONDOWN
-	OH_ELEMENT_MOUSE_HOLD,		// SDL_MOUSEMOTION
-	OH_ELEMENT_MOUSE_UP,		// SDL_MOUSEBUTTONUP
 } oh_element_state;
 
 // Element (static - cannot interact with, dynamic - can interact with)
@@ -82,6 +82,19 @@ int32_t oh_element_init(
 	int32_t useParamStr,
 
 	...
+);
+
+// Same as above, just with args
+int32_t oh_element_init_ex(
+	oh_element *element,
+	oh_element *snap,
+	oh_element_texture_type texture_type,
+	uint8_t activity,
+
+	int32_t useParam,
+	int32_t useParamStr,
+
+	va_list args
 );
 
 // Similar to oh_element_init() but also allocates the element on the heap
