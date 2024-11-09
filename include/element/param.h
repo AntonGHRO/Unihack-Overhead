@@ -8,7 +8,7 @@
 
 // ---------------------------------------------------------------------
 
-#define OH_PARAM_STRING_CAP 			64
+#define OH_PARAM_STRING_CAP 			1024
 #define OH_PARAM_STRING_INIT			"Label"
 
 #define OH_PARAM_KNOB_LABEL_OFFSET 		68

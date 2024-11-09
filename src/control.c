@@ -1,4 +1,7 @@
 #include "../include/control.h"
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
+#include <string.h>
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -13,6 +16,25 @@ static struct {
 	int32_t (*update)();
 	int32_t (*cleanup)();
 } oh_control_scene;
+
+static int32_t is_allowed_key(SDL_Keycode key) {
+    // Check if the key is a letter (A-Z or a-z)
+    if ((key >= 'a' && key <= 'z') || (key >= 'A' && key <= 'Z')) {
+        return 1;
+    }
+
+    // Check if the key is one of the allowed symbols
+    switch (key) {
+        case '!': case '@': case '#': case '$': case '%': case '^': case '&': case '*': case '(': case ')':
+        case '_': case '+': case '-': case '=': case ':': case ';': case '\'': case ',': case '.': case '<':
+        case '>': case '/': case '?': case '`': case '~': case '[': case ']': case '{': case '}': case '\\':
+        case '|': case ' ':
+            return 1;
+    }
+
+    // If the key is not in the allowed range, return 0
+    return 0;
+}
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -41,6 +63,8 @@ static double knob_angle = 0.0;
 uint8_t oh_color_mod_r = 255;
 uint8_t oh_color_mod_g = 255;
 uint8_t oh_color_mod_b = 255;
+
+static oh_element *write_to = NULL;
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -102,7 +126,7 @@ int32_t main(void) {
 			event = *oh_dependencies_get_event();
 
 			// For safety, exit upon pressing Q or if SDL wants to
-	    	if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q)) {
+	    	if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q && control_down)) {
 	            oh_control_stop();
 	    	}
 
@@ -112,6 +136,22 @@ int32_t main(void) {
 
 	    	if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_LCTRL) {
 	    		control_down = 0;
+	    	}
+
+	    	if(event.type == SDL_KEYDOWN && write_to != NULL && is_allowed_key(event.key.keysym.sym)) {
+	    		char str[1024] = {0};
+	    		strcpy(str, write_to->param_str->data);
+	    		int32_t last = strlen(str);
+	    		str[last] = event.key.keysym.sym;
+	    		oh_element_param_str_set_str(write_to->param_str, str);
+	    	}
+
+	    	if(event.type == SDL_KEYDOWN && write_to != NULL && event.key.keysym.sym == SDLK_BACKSPACE) {
+	    		if(strlen(write_to->param_str->data) > 1) {
+	    			char str[1024] = {0};
+	    			strncpy(str, write_to->param_str->data, strlen(write_to->param_str->data) - 1);
+	    			oh_element_param_str_set_str(write_to->param_str, str);
+	    		}
 	    	}
 
 	    	// Move canvas
@@ -146,11 +186,19 @@ int32_t main(void) {
 	    		last_x = event.button.x;
 	    		last_y = event.button.y;
 
+	    		if(write_to != NULL) {
+	    			oh_element_set_transparent(write_to, 1);
+	    			write_to = NULL;
+	    		}
+
 	    		if(worksheet != NULL) {
 	    			if(worksheet->hover != NULL) {
 	    				if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_KNOB) {
 	    					knob_rotate = 1;
 	    					knob_angle = worksheet->hover->angle;
+	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE || worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE_BIG) {
+	    					write_to = worksheet->hover;
+	    					oh_element_set_transparent(write_to, 0);
 	    				}
 	    			}
 	    		}

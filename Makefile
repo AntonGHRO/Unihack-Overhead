@@ -31,7 +31,7 @@ RELEASE_TARGET = $(BIN_DIR)/Overhead
 DEBUG_TARGET = $(BIN_DIR)/Overhead_debug
 
 # Default target (build both release and debug)
-all: debug
+all: release run_release
 
 # Release build target
 release: $(RELEASE_TARGET)

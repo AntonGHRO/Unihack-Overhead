@@ -15,7 +15,7 @@
 
 // ---------------------------------------------------------------------
 
-#define OH_WORKSHEET_ELEMENT_BUFFER_CAP 64
+#define OH_WORKSHEET_ELEMENT_BUFFER_CAP 1024
 
 // ---------------------------------------------------------------------
 // [IMPORTANT] Structure that remembers the "state" of every worksheet

@@ -5,12 +5,10 @@
 extern int32_t oh_control_x();
 extern int32_t oh_control_y();
 
-static int32_t transparent = 0;
-
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-int32_t oh_element_set_transparent(int32_t toggle) {
-	transparent = toggle;
+int32_t oh_element_set_transparent(oh_element *element, int32_t toggle) {
+	element->transparent = toggle;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------
@@ -43,6 +41,9 @@ int32_t oh_element_init(
 	element->interact.h = element->texture->surface->h;
 	element->interact.x = 0;
 	element->interact.y = 0;
+
+	// Transparency
+	element->transparent = texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_BIG ? 0 : 1;
 
 	// Texture type
 	element->texture_type = texture_type;
@@ -255,6 +256,9 @@ int32_t oh_element_init_ex(
 	element->interact.x = 0;
 	element->interact.y = 0;
 
+	// Transparency
+	element->transparent = texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_BIG ? 0 : 1;
+
 	// Texture type
 	element->texture_type = texture_type;
 
@@ -458,7 +462,7 @@ static int32_t oh_element_render_ex(oh_element *element) {
 	// 	SDL_SetTextureColorMod(element->texture->texture, 255, 255, 255);
 	// }
 
-	if(!transparent) {
+	if(!element->transparent) {
 		if(element->angle == 0.0) {
 			SDL_RenderCopy(oh_dependencies_get_renderer(), element->texture->texture, NULL, &rect);
 		} else {
@@ -533,7 +537,7 @@ int32_t oh_element_render(oh_element *element) {
 	// }
 
 	// Render with / without angle
-	if(!transparent) {
+	if(!element->transparent) {
 		if(element->angle == 0.0) {
 			SDL_RenderCopy(oh_dependencies_get_renderer(), element->texture->texture, NULL, &rect);
 		} else {
