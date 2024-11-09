@@ -9,6 +9,7 @@
 // Params, textures
 #include "param.h"
 #include "texture.h"
+#include <stdint.h>
 
 // ---------------------------------------------------------------------
 
@@ -115,6 +116,9 @@ int32_t oh_element_init_ex(
 
 // Similar to oh_element_clear() but also calls free on the elements
 // int32_t oh_element_free(oh_element *element, int32_t snap_back);
+
+// Set to render transparent stuff for some time
+int32_t oh_element_set_transparent(int32_t toggle);
 
 // Renders an element
 int32_t oh_element_render(oh_element *element);

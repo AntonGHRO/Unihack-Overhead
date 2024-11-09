@@ -38,6 +38,10 @@ static int32_t control_down = 0;
 static int32_t knob_rotate = 0;
 static double knob_angle = 0.0;
 
+uint8_t oh_color_mod_r = 255;
+uint8_t oh_color_mod_g = 255;
+uint8_t oh_color_mod_b = 255;
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 void oh_control_set_scene(
@@ -286,15 +290,23 @@ int32_t oh_control_worksheet_update_states() {
 
 	for(int32_t i = worksheet->dynamic_size - 1; i >= 0; i --) {
 		if(oh_element_is_inside(worksheet->dynamic_element + i, oh_control_cursor_x(), oh_control_cursor_y())) {
-			worksheet->dynamic_element[i].state = OH_ELEMENT_HOVER;
-			worksheet->hover = worksheet->dynamic_element + i;
-			SDL_SetTextureColorMod(worksheet->dynamic_element[i].texture->texture, 240, 240, 240);
-			return OH_TRUE;
+			if(moving_element == 0 && knob_rotate == 0) {
+				worksheet->dynamic_element[i].state = OH_ELEMENT_HOVER;
+				worksheet->hover = worksheet->dynamic_element + i;
+				oh_color_mod_r = 240;
+				oh_color_mod_g = 240;
+				oh_color_mod_b = 240;
+				// SDL_SetTextureColorMod(worksheet->dynamic_element[i].texture->texture, oh_color_mod_r, oh_color_mod_r, oh_color_mod_r);
+				return OH_TRUE;
+			}
 		}
 	}
 
 	if(worksheet->hover != NULL) {
-		SDL_SetTextureColorMod(worksheet->hover->texture->texture, 255, 255, 255);
+		oh_color_mod_r = 255;
+		oh_color_mod_g = 255;
+		oh_color_mod_b = 255;
+		// SDL_SetTextureColorMod(worksheet->hover->texture->texture, oh_color_mod_r, oh_color_mod_g, oh_color_mod_b);
 	}
 
 	if(moving_element == 0 && knob_rotate == 0) {

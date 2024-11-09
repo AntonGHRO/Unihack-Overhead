@@ -81,7 +81,7 @@ run:
 
 # Count lines of code
 lines:
-	@find $(git rev-parse --show-toplevel) -type f -not -path '*/build/*' -not -path '*/bin/*' -not -path '*/.git/*' -not -path '*/resources/*' | xargs wc -l
+	@find $(git rev-parse --show-toplevel) -type f -not -path '*/build/*' -not -path '*/bin/*' -not -path '*/.git/*' -not -path '*/resources/*' -not -path '*/PythonTraining/model_weights_and_biases.npz*' | xargs wc -l
 
 # Check for leaks in the debug version
 leaks:

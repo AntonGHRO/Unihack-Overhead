@@ -5,7 +5,16 @@
 extern int32_t oh_control_x();
 extern int32_t oh_control_y();
 
+static int32_t transparent = 0;
+
 // ---------------------------------------------------------------------------------------------------------------------------------
+
+int32_t oh_element_set_transparent(int32_t toggle) {
+	transparent = toggle;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+
 int32_t oh_element_init(
 	oh_element *element,
 	oh_element *snap,
@@ -423,6 +432,10 @@ int32_t oh_element_init_ex(
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------
+extern uint8_t oh_color_mod_r;
+extern uint8_t oh_color_mod_g;
+extern uint8_t oh_color_mod_b;
+
 static int32_t oh_element_render_ex(oh_element *element) {
 	if(element == NULL) {
 		oh_log(OH_LOG_ERROR, "static oh_element_render_ex(): Received NULL element");
@@ -438,14 +451,23 @@ static int32_t oh_element_render_ex(oh_element *element) {
 		.h = element->texture->surface->h,
 	};
 
-	if(element->angle == 0.0) {
-		SDL_RenderCopy(oh_dependencies_get_renderer(), element->texture->texture, NULL, &rect);
-	} else {
-		SDL_RenderCopyEx(
-			oh_dependencies_get_renderer(),
-			element->texture->texture, NULL,
-			&rect, element->angle,
-			NULL, SDL_FLIP_NONE);
+	// if(oh_color_mod_r != 255) {
+	// 	oh_color_mod_r = 255;
+	// 	oh_color_mod_g = 255;
+	// 	oh_color_mod_b = 255;
+	// 	SDL_SetTextureColorMod(element->texture->texture, 255, 255, 255);
+	// }
+
+	if(!transparent) {
+		if(element->angle == 0.0) {
+			SDL_RenderCopy(oh_dependencies_get_renderer(), element->texture->texture, NULL, &rect);
+		} else {
+			SDL_RenderCopyEx(
+				oh_dependencies_get_renderer(),
+				element->texture->texture, NULL,
+				&rect, element->angle,
+				NULL, SDL_FLIP_NONE);
+		}
 	}
 
 	#ifdef OH_DEBUG
@@ -503,15 +525,24 @@ int32_t oh_element_render(oh_element *element) {
 		.h = element->texture->surface->h,
 	};
 
+	// if(oh_color_mod_r != 255) {
+	// 	oh_color_mod_r = 255;
+	// 	oh_color_mod_g = 255;
+	// 	oh_color_mod_b = 255;
+	// 	SDL_SetTextureColorMod(element->texture->texture, 255, 255, 255);
+	// }
+
 	// Render with / without angle
-	if(element->angle == 0.0) {
-		SDL_RenderCopy(oh_dependencies_get_renderer(), element->texture->texture, NULL, &rect);
-	} else {
-		SDL_RenderCopyEx(
-			oh_dependencies_get_renderer(),
-			element->texture->texture, NULL,
-			&rect, element->angle,
-			NULL, SDL_FLIP_NONE);
+	if(!transparent) {
+		if(element->angle == 0.0) {
+			SDL_RenderCopy(oh_dependencies_get_renderer(), element->texture->texture, NULL, &rect);
+		} else {
+			SDL_RenderCopyEx(
+				oh_dependencies_get_renderer(),
+				element->texture->texture, NULL,
+				&rect, element->angle,
+				NULL, SDL_FLIP_NONE);
+		}
 	}
 
 	#ifdef OH_DEBUG

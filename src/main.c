@@ -7,6 +7,7 @@
 // Grid, Worksheet etc
 #include "../include/worksheet/grid.h"
 #include "../include/worksheet/worksheet.h"
+#include <stdlib.h>
 
 // For now, only gonna be using one worksheet
 static oh_worksheet worksheet;
@@ -41,7 +42,7 @@ int32_t oh_init() {
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
 
 	oh_worksheet_create_element(						// 2
-		&worksheet, worksheet.dynamic_element,
+		&worksheet, worksheet.dynamic_element + 0,
 		OH_ELEMENT_TEXTURE_KNOB,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
 		10, 60, OH_ELEMENT_PARAM_MODE_NORMAL, 0, 0, 0, 255,
@@ -57,13 +58,36 @@ int32_t oh_init() {
 	oh_worksheet_create_element(						// 4
 		&worksheet, worksheet.dynamic_element + 3,
 		OH_ELEMENT_TEXTURE_TEXT_LINE,
-		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		0, 0, 255, 255, 255, 255
+	);
+
+	oh_worksheet_create_element(						// 5
+		&worksheet, worksheet.dynamic_element + 3,
+		OH_ELEMENT_TEXTURE_TEXT_LINE,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		0, 0, 255, 255, 255, 255
+	);
+
+	oh_worksheet_create_element(						// 6
+		&worksheet, worksheet.dynamic_element + 3,
+		OH_ELEMENT_TEXTURE_TEXT_LINE,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		0, 0, 255, 255, 255, 255
 	);
 
 	oh_element_set_snap_offset(worksheet.dynamic_element + 2, 30, 60);
 	oh_element_set_snap_offset(worksheet.dynamic_element + 3, 67, 90);
 
 	oh_element_set_position(worksheet.dynamic_element + 1, 500, 0);
+
+	oh_element_param_str_set_str(worksheet.dynamic_element[4].param_str, "Hello World");
+	oh_element_param_str_set_str(worksheet.dynamic_element[5].param_str, "I love you Dia!");
+	oh_element_param_str_set_str(worksheet.dynamic_element[6].param_str, "I'm bored");
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 4, 0, 0);
+	oh_element_set_snap_offset(worksheet.dynamic_element + 5, 0, 20);
+	oh_element_set_snap_offset(worksheet.dynamic_element + 6, 0, 40);
 
 	// Set worksheet to work on
 	oh_control_set_worksheet(&worksheet);
