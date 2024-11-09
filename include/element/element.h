@@ -53,6 +53,9 @@ struct oh_element {
 	// State
 	oh_element_state state;
 
+	// Texture type
+	oh_element_texture_type texture_type;
+
 	// Angle
 	double angle;
 

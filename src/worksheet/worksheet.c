@@ -137,6 +137,8 @@ int32_t oh_worksheet_create_element(
 	return OH_FALSE;
 }
 
+// --------------------------------------------------------------------------------------------------------------------------------------
+
 int32_t oh_worksheet_render(oh_worksheet *ws) {
 	if(ws == NULL) {
 		oh_log(OH_LOG_WARN, "oh_worksheet_render(): Passed NULL worksheet");
@@ -144,6 +146,10 @@ int32_t oh_worksheet_render(oh_worksheet *ws) {
 	}
 
 	for(uint32_t i = 0; i < ws->static_size; i ++) {
+		if(ws->static_element[i].snap != NULL) {
+			continue;
+		}
+
 		if(oh_element_render(ws->static_element + i) == OH_FALSE) {
 			oh_log(OH_LOG_WARN, "oh_worksheet_render(): oh_element_render() static failed");
 			return OH_FALSE;
@@ -151,6 +157,10 @@ int32_t oh_worksheet_render(oh_worksheet *ws) {
 	}
 
 	for(uint32_t i = 0; i < ws->dynamic_size; i ++) {
+		if(ws->dynamic_element[i].snap != NULL) {
+			continue;
+		}
+
 		if(oh_element_render(ws->dynamic_element + i) == OH_FALSE) {
 			oh_log(OH_LOG_WARN, "oh_worksheet_render(): oh_element_render() dynamic failed");
 			return OH_FALSE;
@@ -159,3 +169,5 @@ int32_t oh_worksheet_render(oh_worksheet *ws) {
 
 	return OH_TRUE;
 }
+
+// --------------------------------------------------------------------------------------------------------------------------------------

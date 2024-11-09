@@ -83,7 +83,7 @@ int32_t oh_element_param_set_pos(oh_element_param *param, int32_t x, int32_t y) 
 	return OH_TRUE;
 }
 
-int32_t oh_element_param_render(oh_element_param *param) {
+int32_t oh_element_param_render(oh_element_param *param, int32_t x, int32_t y) {
 	static char string[1024];
 
 	if(param->texture == NULL || param->data != param->data_old) {
@@ -136,8 +136,8 @@ int32_t oh_element_param_render(oh_element_param *param) {
 	}
 
 	SDL_Rect rect = {
-		.x = param->rect.x - oh_control_x(),
-		.y = param->rect.y - oh_control_y(),
+		.x = x + param->rect.x - oh_control_x(),
+		.y = y + param->rect.y - oh_control_y(),
 		.w = param->rect.w,
 		.h = param->rect.h,
 	};
@@ -262,7 +262,7 @@ int32_t oh_element_param_str_set_pos(oh_element_param_str *param, int32_t x, int
 	return OH_TRUE;
 }
 
-int32_t oh_element_param_str_render(oh_element_param_str *param) {
+int32_t oh_element_param_str_render(oh_element_param_str *param, int32_t x, int32_t y) {
 	if(param->texture == NULL || strcmp(param->data, param->data_old) != 0) {
 		SDL_Surface *surface = TTF_RenderText_Blended(oh_dependencies_get_font(), param->data, param->color);
 
@@ -289,8 +289,8 @@ int32_t oh_element_param_str_render(oh_element_param_str *param) {
 	}
 
 	SDL_Rect rect = {
-		.x = param->rect.x - oh_control_x(),
-		.y = param->rect.y - oh_control_y(),
+		.x = x + param->rect.x - oh_control_x(),
+		.y = y + param->rect.y - oh_control_y(),
 		.w = param->rect.w,
 		.h = param->rect.h,
 	};

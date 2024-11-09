@@ -33,6 +33,11 @@ static int32_t last_y = 0;
 static int32_t last_x_element = 0;
 static int32_t last_y_element = 0;
 
+static int32_t control_down = 0;
+
+static int32_t knob_rotate = 0;
+static double knob_angle = 0.0;
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 void oh_control_set_scene(
@@ -97,6 +102,14 @@ int32_t main(void) {
 	            oh_control_stop();
 	    	}
 
+	    	if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_LCTRL) {
+	    		control_down = 1;
+	    	}
+
+	    	if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_LCTRL) {
+	    		control_down = 0;
+	    	}
+
 	    	// Move canvas
 	    	if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT) {
 	    		moving = 1;
@@ -104,11 +117,13 @@ int32_t main(void) {
 	    		last_y = event.button.y;
 	    	}
 
+	    	// Not move Canvas
 	    	if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_RIGHT) {
 	    		moving = 0;
 	    	}
 
-	    	if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+	    	// Move element
+	    	if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && control_down) {
 	    		last_x = event.button.x;
 	    		last_y = event.button.y;
 
@@ -122,14 +137,32 @@ int32_t main(void) {
 	    		}
 	    	}
 
-	    	if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT) {
+	    	// Click element
+	    	if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !control_down) {
+	    		last_x = event.button.x;
+	    		last_y = event.button.y;
+
 	    		if(worksheet != NULL) {
 	    			if(worksheet->hover != NULL) {
-	    				moving_element = 0;
+	    				if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_KNOB) {
+	    					knob_rotate = 1;
+	    					knob_angle = worksheet->hover->angle;
+	    				}
 	    			}
 	    		}
 	    	}
 
+	    	// Not move element
+	    	if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT) {
+	    		if(worksheet != NULL) {
+	    			if(worksheet->hover != NULL) {
+	    				moving_element = 0;
+	    				knob_rotate = 0;
+	    			}
+	    		}
+	    	}
+
+	    	// Update motion
 	    	if(event.type == SDL_MOUSEMOTION) {
 	    		oh_cursor_x = event.motion.x;
 	    		oh_cursor_y = event.motion.y;
@@ -146,6 +179,12 @@ int32_t main(void) {
 	    				oh_cursor_x + oh_x - worksheet->hover->interact.x - (last_x + oh_x - last_x_element),
 	    				oh_cursor_y + oh_y - worksheet->hover->interact.y - (last_y + oh_y - last_y_element)
 					);
+	    		} else if(knob_rotate && worksheet->hover != NULL) {
+	    			oh_element_set_angle(worksheet->hover, knob_angle + (float)((oh_cursor_x - last_x) / 2));
+
+	    			if(worksheet->hover->param != NULL) {
+	    				oh_element_param_set_val(worksheet->hover->param, worksheet->hover->angle * 0.1);
+	    			}
 	    		}
 	    	}
 
@@ -258,7 +297,7 @@ int32_t oh_control_worksheet_update_states() {
 		SDL_SetTextureColorMod(worksheet->hover->texture->texture, 255, 255, 255);
 	}
 
-	if(moving_element == 0) {
+	if(moving_element == 0 && knob_rotate == 0) {
 		worksheet->hover = NULL;
 	}
 

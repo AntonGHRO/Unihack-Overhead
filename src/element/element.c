@@ -35,6 +35,9 @@ int32_t oh_element_init(
 	element->interact.x = 0;
 	element->interact.y = 0;
 
+	// Texture type
+	element->texture_type = texture_type;
+
 	// Disable -Wswitch warning
 	#pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wswitch"
@@ -146,8 +149,8 @@ int32_t oh_element_init(
 		if(useParam == 1 && useParamStr == 0) {
 			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x = va_arg(list, int) + element->position.x;
-			int32_t y = va_arg(list, int) + element->position.y;
+			int32_t x = va_arg(list, int);
+			int32_t y = va_arg(list, int);
 			oh_param_mode mode = va_arg(list, int);
 			uint8_t r = va_arg(list, int);
 			uint8_t g = va_arg(list, int);
@@ -162,8 +165,8 @@ int32_t oh_element_init(
 		} else if(useParam == 0 && useParamStr == 1) {
 			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x = va_arg(list, int) + element->position.x;
-			int32_t y = va_arg(list, int) + element->position.y;
+			int32_t x = va_arg(list, int);
+			int32_t y = va_arg(list, int);
 			uint8_t r = va_arg(list, int);
 			uint8_t g = va_arg(list, int);
 			uint8_t b = va_arg(list, int);
@@ -177,8 +180,8 @@ int32_t oh_element_init(
 		} else if(useParam == 1 && useParamStr == 1) {
 			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x = va_arg(list, int) + element->position.x;
-			int32_t y = va_arg(list, int) + element->position.y;
+			int32_t x = va_arg(list, int);
+			int32_t y = va_arg(list, int);
 			oh_param_mode mode = va_arg(list, int);
 			uint8_t r = va_arg(list, int);
 			uint8_t g = va_arg(list, int);
@@ -193,8 +196,8 @@ int32_t oh_element_init(
 
 			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x_str = va_arg(list, int) + element->position.x;
-			int32_t y_str = va_arg(list, int) + element->position.y;
+			int32_t x_str = va_arg(list, int);
+			int32_t y_str = va_arg(list, int);
 			uint8_t r_str = va_arg(list, int);
 			uint8_t g_str = va_arg(list, int);
 			uint8_t b_str = va_arg(list, int);
@@ -242,6 +245,9 @@ int32_t oh_element_init_ex(
 	element->interact.h = element->texture->surface->h;
 	element->interact.x = 0;
 	element->interact.y = 0;
+
+	// Texture type
+	element->texture_type = texture_type;
 
 	// Disable -Wswitch warning
 	#pragma GCC diagnostic push
@@ -351,8 +357,8 @@ int32_t oh_element_init_ex(
 		if(useParam == 1 && useParamStr == 0) {
 			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x = va_arg(list, int) + element->position.x;
-			int32_t y = va_arg(list, int) + element->position.y;
+			int32_t x = va_arg(list, int);
+			int32_t y = va_arg(list, int);
 			oh_param_mode mode = va_arg(list, int);
 			uint8_t r = va_arg(list, int);
 			uint8_t g = va_arg(list, int);
@@ -367,8 +373,8 @@ int32_t oh_element_init_ex(
 		} else if(useParam == 0 && useParamStr == 1) {
 			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x = va_arg(list, int) + element->position.x;
-			int32_t y = va_arg(list, int) + element->position.y;
+			int32_t x = va_arg(list, int);
+			int32_t y = va_arg(list, int);
 			uint8_t r = va_arg(list, int);
 			uint8_t g = va_arg(list, int);
 			uint8_t b = va_arg(list, int);
@@ -382,8 +388,8 @@ int32_t oh_element_init_ex(
 		} else if(useParam == 1 && useParamStr == 1) {
 			// int32_t x, int32_t y, oh_param_mode mode, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x = va_arg(list, int) + element->position.x;
-			int32_t y = va_arg(list, int) + element->position.y;
+			int32_t x = va_arg(list, int);
+			int32_t y = va_arg(list, int);
 			oh_param_mode mode = va_arg(list, int);
 			uint8_t r = va_arg(list, int);
 			uint8_t g = va_arg(list, int);
@@ -398,8 +404,8 @@ int32_t oh_element_init_ex(
 
 			// int32_t x, int32_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a
 
-			int32_t x_str = va_arg(list, int) + element->position.x;
-			int32_t y_str = va_arg(list, int) + element->position.y;
+			int32_t x_str = va_arg(list, int);
+			int32_t y_str = va_arg(list, int);
 			uint8_t r_str = va_arg(list, int);
 			uint8_t g_str = va_arg(list, int);
 			uint8_t b_str = va_arg(list, int);
@@ -464,6 +470,15 @@ static int32_t oh_element_render_ex(oh_element *element) {
 		}
 	}
 
+	// Render params
+	if(element->param != NULL) {
+		oh_element_param_render(element->param, element->position.x, element->position.y);
+	}
+
+	if(element->param_str != NULL) {
+		oh_element_param_str_render(element->param_str, element->position.x, element->position.y);
+	}
+
 	return OH_TRUE;
 }
 
@@ -525,11 +540,11 @@ int32_t oh_element_render(oh_element *element) {
 
 	// Render params
 	if(element->param != NULL) {
-		oh_element_param_render(element->param);
+		oh_element_param_render(element->param, element->position.x, element->position.y);
 	}
 
 	if(element->param_str != NULL) {
-		oh_element_param_str_render(element->param_str);
+		oh_element_param_str_render(element->param_str, element->position.x, element->position.y);
 	}
 
 	return OH_TRUE;

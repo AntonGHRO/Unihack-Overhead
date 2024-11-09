@@ -40,6 +40,16 @@ int32_t oh_init() {
 		OH_ELEMENT_TEXTURE_WIN_600x600,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
 
+	oh_worksheet_create_element(
+		&worksheet, worksheet.dynamic_element,
+		OH_ELEMENT_TEXTURE_KNOB,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
+		10, 60, OH_ELEMENT_PARAM_MODE_NORMAL, 0, 0, 0, 255,
+		10, 80, 0, 0, 0, 255
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 2, 30, 60);
+
 	oh_element_set_position(worksheet.dynamic_element + 1, 500, 500);
 
 	// Set worksheet to work on
