@@ -26,6 +26,13 @@ static int32_t oh_cursor_y = 0;
 
 static oh_worksheet *worksheet = NULL;
 
+static int32_t moving = 0;
+static int32_t moving_element = 0;
+static int32_t last_x = 0;
+static int32_t last_y = 0;
+static int32_t last_x_element = 0;
+static int32_t last_y_element = 0;
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 void oh_control_set_scene(
@@ -61,11 +68,6 @@ int32_t main(void) {
 	if(oh_element_texture_init() == OH_FALSE) {
 		exit(EXIT_FAILURE);
 	}
-
-	int32_t moving = 0;
-	int32_t moving_element = 0;
-	int32_t last_x = 0;
-	int32_t last_y = 0;
 
 	oh_x = - oh_dependencies_get_display_mode().w / 2;
 	oh_y = - oh_dependencies_get_display_mode().h / 2;
@@ -107,10 +109,15 @@ int32_t main(void) {
 	    	}
 
 	    	if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+	    		last_x = event.button.x;
+	    		last_y = event.button.y;
+
 	    		if(worksheet != NULL) {
 	    			if(worksheet->hover != NULL) {
 	    				moving_element = 1;
-	    				oh_log(OH_LOG_INFO, "main(): Moving element in worksheet %s", worksheet->name);
+
+	    				last_x_element = worksheet->hover->position.x + worksheet->hover->interact.x;
+	    				last_y_element = worksheet->hover->position.y + worksheet->hover->interact.y;
 	    			}
 	    		}
 	    	}
@@ -133,10 +140,12 @@ int32_t main(void) {
 
 		    		last_x = event.motion.x;
 		    		last_y = event.motion.y;
-	    		}
-
-	    		if(moving_element) {
-	    			oh_element_set_position(worksheet->hover, oh_cursor_x, oh_cursor_y);
+	    		} else if(moving_element && worksheet->hover != NULL) {
+	    			oh_element_set_position(
+	    				worksheet->hover,
+	    				oh_cursor_x + oh_x - worksheet->hover->interact.x - (last_x + oh_x - last_x_element),
+	    				oh_cursor_y + oh_y - worksheet->hover->interact.y - (last_y + oh_y - last_y_element)
+					);
 	    		}
 	    	}
 
@@ -158,6 +167,11 @@ int32_t main(void) {
 
         // Only for worksheet context...
         oh_worksheet_grid_render();
+
+        // Worksheet update states
+        if(worksheet != NULL) {
+        	oh_control_worksheet_update_states();
+        }
 
         // User rendering
         if(oh_control_scene.update() == OH_FALSE) {
@@ -213,10 +227,12 @@ int32_t oh_control_cursor_y() {
 }
 
 int32_t oh_control_set_worksheet(oh_worksheet *ws) {
-	if(ws == NULL) {
-		oh_log(OH_LOG_ERROR, "oh_control_set_worksheet(): Passed NULL worksheet");
-		return OH_FALSE;
-	}
+	// if(ws == NULL) {
+	// 	oh_log(OH_LOG_ERROR, "oh_control_set_worksheet(): Passed NULL worksheet");
+	// 	return OH_FALSE;
+	// }
+
+	worksheet = ws;
 
 	return OH_TRUE;
 }
@@ -229,16 +245,23 @@ int32_t oh_control_worksheet_update_states() {
 		return OH_FALSE;
 	}
 
-	for(uint32_t i = 0; i < worksheet->dynamic_size; i ++) {
+	for(int32_t i = worksheet->dynamic_size - 1; i >= 0; i --) {
 		if(oh_element_is_inside(worksheet->dynamic_element + i, oh_control_cursor_x(), oh_control_cursor_y())) {
 			worksheet->dynamic_element[i].state = OH_ELEMENT_HOVER;
 			worksheet->hover = worksheet->dynamic_element + i;
-			oh_log(OH_LOG_INFO, "oh_control_worksheet_update_states(): Cursor over element %u", i);
+			SDL_SetTextureColorMod(worksheet->dynamic_element[i].texture->texture, 240, 240, 240);
 			return OH_TRUE;
 		}
 	}
 
-	worksheet->hover = NULL;
+	if(worksheet->hover != NULL) {
+		SDL_SetTextureColorMod(worksheet->hover->texture->texture, 255, 255, 255);
+	}
+
+	if(moving_element == 0) {
+		worksheet->hover = NULL;
+	}
+
 	return OH_TRUE;
 }
 

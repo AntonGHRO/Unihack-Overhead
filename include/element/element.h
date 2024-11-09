@@ -124,6 +124,9 @@ void 	oh_element_set_angle 		(oh_element *element, double angle);
 
 int32_t oh_element_is_inside 		(oh_element *element, int32_t x, int32_t y);
 
+int32_t oh_element_interact_x 		(oh_element *element);
+int32_t oh_element_interact_y 		(oh_element *element);
+
 // ---------------------------------------------------------------------
 
 #endif
