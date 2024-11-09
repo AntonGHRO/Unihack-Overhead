@@ -22,6 +22,8 @@ typedef enum {
 	OH_ELEMENT_TEXTURE_WIN_800x800,  		// Has interaction box
 	OH_ELEMENT_TEXTURE_WIN_1200x670,  		// Has interaction box
 	OH_ELEMENT_TEXTURE_WIN_1800x1000,  		// Has interaction box
+	OH_ELEMENT_TEXTURE_TEXT_BOX,
+	OH_ELEMENT_TEXTURE_TEXT_LINE,
 	OH_ELEMENT_TEXTURE_COUNT,
 } oh_element_texture_type;
 

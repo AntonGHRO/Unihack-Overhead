@@ -30,17 +30,17 @@ int32_t oh_init() {
 	// Worksheet
 	oh_worksheet_init(&worksheet, "main");
 
-	oh_worksheet_create_element(
+	oh_worksheet_create_element(						// 0
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_400x400,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
 
-	oh_worksheet_create_element(
+	oh_worksheet_create_element(						// 1
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_600x600,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
 
-	oh_worksheet_create_element(
+	oh_worksheet_create_element(						// 2
 		&worksheet, worksheet.dynamic_element,
 		OH_ELEMENT_TEXTURE_KNOB,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
@@ -48,9 +48,22 @@ int32_t oh_init() {
 		10, 80, 0, 0, 0, 255
 	);
 
-	oh_element_set_snap_offset(worksheet.dynamic_element + 2, 30, 60);
+	oh_worksheet_create_element(						// 3
+		&worksheet, worksheet.dynamic_element + 1,
+		OH_ELEMENT_TEXTURE_TEXT_BOX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
 
-	oh_element_set_position(worksheet.dynamic_element + 1, 500, 500);
+	oh_worksheet_create_element(						// 4
+		&worksheet, worksheet.dynamic_element + 3,
+		OH_ELEMENT_TEXTURE_TEXT_LINE,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 2, 30, 60);
+	oh_element_set_snap_offset(worksheet.dynamic_element + 3, 67, 90);
+
+	oh_element_set_position(worksheet.dynamic_element + 1, 500, 0);
 
 	// Set worksheet to work on
 	oh_control_set_worksheet(&worksheet);

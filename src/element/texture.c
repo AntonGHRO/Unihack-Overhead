@@ -22,6 +22,8 @@ static const char *path[OH_ELEMENT_TEXTURE_COUNT] = {
 	"./resources/win_800x800.png",
 	"./resources/win_1200x670.png",
 	"./resources/win_1800x1000.png",
+	"./resources/text_box.png",
+	"./resources/text_line.png",
 };
 
 // ---------------------------------------------------------------------
