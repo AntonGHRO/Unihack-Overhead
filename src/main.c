@@ -541,6 +541,26 @@ int32_t oh_init() {
 
 	oh_element_set_snap_offset(worksheet.dynamic_element + 128, 140, 698);
 
+	// ---------------------------------------------------------------------------------------------------------------------------------- Plot Loss Function
+
+	oh_worksheet_create_element(						// 129 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_600x600,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 255
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 129, 1600, 1000);
+	oh_element_param_str_set_str(worksheet.dynamic_element[129].param_str, "Plot of loss function");
+
+	oh_worksheet_create_element(						// 130
+		&worksheet, worksheet.dynamic_element + 129,
+		OH_ELEMENT_TEXTURE_TEXT_BOX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 130, 66, 86);
+
 	// ---------------------------------------------------------------------------------------------------------------------------------- WORKSHEET
 
 	// Set worksheet to work on
@@ -579,6 +599,11 @@ int32_t oh_update() {
 
 	plot2D(rect, target, range_mix_x, range_max_x, -2.0, +2.0, 0.1f, 100, 255, 100);
 	plot2D(rect, feed, range_mix_x, range_max_x, -2.0, +2.0, 0.1f, 255, 255, 255);
+
+	rect.x = worksheet.dynamic_element[130].interact.x + worksheet.dynamic_element[130].position.x - oh_control_x();
+	rect.y = worksheet.dynamic_element[130].interact.y + worksheet.dynamic_element[130].position.y - oh_control_y();
+
+	plot2D(rect, error, range_mix_x, range_max_x, -2.0, +2.0, 0.1f, 255, 255, 0);
 
 	oh_control_set_knob_sen(0.5f);
 	leaky_bias = worksheet.dynamic_element[74].angle;
