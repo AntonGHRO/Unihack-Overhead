@@ -20,6 +20,58 @@ extern int32_t oh_control_cursor_x();
 extern int32_t oh_control_cursor_y();
 extern int32_t oh_control_set_worksheet(oh_worksheet *ws);
 
+static float leaky_param = 0.5f;
+static float LeakyReLU(float x) {
+	if (x > 0) return x;
+	return leaky_param * x;
+}
+
+static int32_t convert_x(SDL_Rect rect, float x, float min_x, float max_x) {
+    return (int32_t)((x - min_x) / (max_x - min_x) * rect.w + rect.x);
+}
+
+static int32_t convert_y(SDL_Rect rect, float y, float min_y, float max_y) {
+    return (int32_t)((max_y - y) / (max_y - min_y) * rect.h + rect.y);
+}
+
+static int32_t clip_y(SDL_Rect rect, int32_t y) {
+    if (y < rect.y) return rect.y;
+    if (y > rect.y + rect.h) return rect.y + rect.h;
+    return y;
+}
+
+static void plot2D(SDL_Rect rect, float (*f)(float), float min_x, float max_x, float min_y, float max_y, float step) {
+    SDL_SetRenderDrawColor(oh_dependencies_get_renderer(), 255, 100, 100, 255);  // Red color for axes
+
+    int32_t x_axis = convert_y(rect, 0, min_y, max_y);  // Convert y = 0 to pixel position
+    SDL_RenderDrawLine(oh_dependencies_get_renderer(), rect.x, x_axis, rect.x + rect.w, x_axis);
+    
+    int32_t y_axis = convert_x(rect, 0, min_x, max_x);  // Convert x = 0 to pixel position
+    SDL_RenderDrawLine(oh_dependencies_get_renderer(), y_axis, rect.y, y_axis, rect.y + rect.h);
+    
+    SDL_SetRenderDrawColor(oh_dependencies_get_renderer(), 255, 255, 255, 255); 
+
+    float x_prev = min_x;
+    float y_prev = f(x_prev);
+    
+    int32_t px1 = convert_x(rect, x_prev, min_x, max_x);
+    int32_t py1 = clip_y(rect, convert_y(rect, y_prev, min_y, max_y));
+
+    for (float x = min_x + step; x <= max_x; x += step) {
+        float y = f(x);
+
+        int32_t px2 = convert_x(rect, x, min_x, max_x);
+        int32_t py2 = clip_y(rect, convert_y(rect, y, min_y, max_y));
+
+        if (py1 >= rect.y && py1 <= rect.y + rect.h && py2 >= rect.y && py2 <= rect.y + rect.h) {
+            SDL_RenderDrawLine(oh_dependencies_get_renderer(), px1, py1, px2, py2);
+        }
+
+        px1 = px2;
+        py1 = py2;
+    }
+}
+
 // ============================================ INIT ============================================
 int32_t oh_init() {
 	// Set grid width and color
@@ -44,7 +96,7 @@ int32_t oh_init() {
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
 	);
 
-	oh_element_set_snap_offset(worksheet.dynamic_element + 1, 68, 86);
+	oh_element_set_snap_offset(worksheet.dynamic_element + 1, 66, 86);
 
 	for(uint32_t i = 2; i < 27; i ++) {
 		oh_worksheet_create_element(					// 2-26
@@ -67,13 +119,13 @@ int32_t oh_init() {
 	oh_element_param_str_set_str(worksheet.dynamic_element[12].param_str, " patterns in data, adjusting themselves");
 	oh_element_param_str_set_str(worksheet.dynamic_element[13].param_str, " to improve accuracy over time");
 	oh_element_param_str_set_str(worksheet.dynamic_element[15].param_str, " ----------- Our Neural Network Setup ----------- ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[17].param_str, " * One input layer with polynomial features");
-	oh_element_param_str_set_str(worksheet.dynamic_element[18].param_str, " of our input variable (e.g. x, x^2, x^3)");
-	oh_element_param_str_set_str(worksheet.dynamic_element[20].param_str, " * One output layer with a single neuron,");
-	oh_element_param_str_set_str(worksheet.dynamic_element[21].param_str, " which will give us our function approximation.");
-	oh_element_param_str_set_str(worksheet.dynamic_element[23].param_str, " --------------- Why this works ? --------------- ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[24].param_str, " Our neural network acts similarly");
-	oh_element_param_str_set_str(worksheet.dynamic_element[25].param_str, " to a Taylor series approximation!");
+	oh_element_param_str_set_str(worksheet.dynamic_element[17].param_str, " * One input layer with a single neuron X ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[18].param_str, " * One hidden layer with \"Leaky ReLU\" activations");
+	oh_element_param_str_set_str(worksheet.dynamic_element[19].param_str, " * One output layer with a single neuron Y,");
+	oh_element_param_str_set_str(worksheet.dynamic_element[20].param_str, " which will give us our function approximation.");
+	oh_element_param_str_set_str(worksheet.dynamic_element[22].param_str, " ------------- Why Use Leaky ReLU ? -------------- ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[23].param_str, " It allows for some gradient flow for negative ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[24].param_str, " values avoiding \"dead\" neurons. ");
 
 	// ---------------------------------------------------------------------------------------------------------------------------------- SECOND NOTES
 
@@ -105,17 +157,17 @@ int32_t oh_init() {
 	}
 
 	oh_element_param_str_set_str(worksheet.dynamic_element[30].param_str, " --------------------------- Getting started --------------------------- ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[32].param_str, " By learning the weights on each of these polynomial features, the");
+	oh_element_param_str_set_str(worksheet.dynamic_element[32].param_str, " By learning the parameters of each of these ReLU functions, the");
 	oh_element_param_str_set_str(worksheet.dynamic_element[33].param_str, " network can \"learn\" a function that closely resembles our ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[34].param_str, " target function even if it is nonlinear or complex. ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[36].param_str, " ------------------------ Training the Network ------------------------- ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[38].param_str, " To train this network, we will use a process called ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[39].param_str, " \"GRADIENT DESCENT\" with \"BACKPROPAGATION\" ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[40].param_str, " This process works as follows: ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[42].param_str, "   1. The network predicts an output based on the current weights. ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[43].param_str, "   2. We measure how close the prediction is to the actual function ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[42].param_str, "   1. The NN applies Leaky ReLU on inputs, and passes it to the output. ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[43].param_str, "   2. Measure how close the prediction is to the actual function ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[44].param_str, "      value using an \"ERROR FUNCTION\" or \"LOSS FUNCTION\". ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[45].param_str, "   3. The network predicts an output based on the current weights. ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[45].param_str, "   3. Adjust each parameters based on the error to improve the NN's. ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[47].param_str, " After enough training steps, the neural network will output values");
 	oh_element_param_str_set_str(worksheet.dynamic_element[49].param_str, " --------------------------- Demonstration ----------------------------- ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[51].param_str, " Let's see how to build this neural network and train it with data ");
@@ -124,6 +176,41 @@ int32_t oh_init() {
 	oh_element_param_str_set_str(worksheet.dynamic_element[55].param_str, " to approximate the shape of the function, even though");
 	oh_element_param_str_set_str(worksheet.dynamic_element[56].param_str, " it starts with no prior knowledge of it.");
 	oh_element_param_str_set_str(worksheet.dynamic_element[58].param_str, " ---------------------------- Other notes ------------------------------ ");
+
+	// ---------------------------------------------------------------------------------------------------------------------------------- PLOT LEAKY RELU
+
+	oh_worksheet_create_element(						// 65 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_600x600,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+
+	oh_element_set_position(worksheet.dynamic_element + 65, 0, 700);
+
+	oh_worksheet_create_element(						// 66
+		&worksheet, worksheet.dynamic_element + 65,
+		OH_ELEMENT_TEXTURE_TEXT_BOX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 66, 66, 86);
+
+	// ---------------------------------------------------------------------------------------------------------------------------------- KNOB ARRAY
+
+	oh_worksheet_create_element(						// 67 Window for knob array
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_200x200,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+
+	oh_element_set_position(worksheet.dynamic_element + 67, 700, 900);
+
+	oh_worksheet_create_element(						// 67 Window for knob array
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_KNOB,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
+		
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 67, 700, 900);
 
 	// Set worksheet to work on
 	oh_control_set_worksheet(&worksheet);
@@ -140,6 +227,15 @@ int32_t oh_event(SDL_Event event) {
 // ============================================ UPDATE ============================================
 int32_t oh_update() {
 	oh_worksheet_render(&worksheet);
+
+	SDL_Rect rect = {
+		.x = worksheet.dynamic_element[66].interact.x + worksheet.dynamic_element[66].position.x - oh_control_x(),
+		.y = worksheet.dynamic_element[66].interact.y + worksheet.dynamic_element[66].position.y - oh_control_y(),
+		.w = worksheet.dynamic_element[66].interact.w,
+		.h = worksheet.dynamic_element[66].interact.h,
+	};
+
+	plot2D(rect, LeakyReLU, -10.0, +10.0, -2.0, +2.0, 0.1f);
 
 	return OH_TRUE;
 }
