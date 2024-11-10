@@ -1,4 +1,5 @@
 #include "../../include/element/texture.h"
+#include <SDL2/SDL_render.h>
 
 // ---------------------------------------------------------------------
 
@@ -27,7 +28,18 @@ static const char *path[OH_ELEMENT_TEXTURE_COUNT] = {
 	"./resources/text_line.png",
 	"./resources/text_line_big.png",
 	"./resources/toggle_off.png",
-	"./resources/toggle_on.png"
+	"./resources/toggle_on.png",
+	"./resources/hardcode.png",
+	"./resources/loss.png",
+	"./resources/common.png",
+	"./resources/ow1.png",
+	"./resources/ow2.png",
+	"./resources/bias.png",
+	"./resources/leaky.png",
+	"./resources/bias2.png",
+	"./resources/hw.png",
+	"./resources/latex.png",
+	"./resources/latex2.png",
 };
 
 // ---------------------------------------------------------------------

@@ -75,7 +75,7 @@ static float error(float x) {
 }
 
 void descent(float xt) {
-    float common = 0.001f * learn_rate * 2 * (feed(xt) - target(xt));
+    float common = 0.0001f * learn_rate * 2 * (feed(xt) - target(xt));
 
     float hw_aux;
     float b_aux;
@@ -164,7 +164,11 @@ int32_t oh_init() {
 	oh_worksheet_create_element(						// 0 Notes 600
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_600x600,
-		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 0
+	);
+
+	oh_element_param_str_set_str(worksheet.dynamic_element[0].param_str, "Introduction notes");
 
 	oh_worksheet_create_element(						// 1
 		&worksheet, worksheet.dynamic_element,
@@ -186,7 +190,7 @@ int32_t oh_init() {
 		oh_element_param_str_set_str(worksheet.dynamic_element[i].param_str, " ");
 	}
 
-	oh_element_param_str_set_str(worksheet.dynamic_element[3].param_str, " -- Diving into the basics of machine learning --");
+	oh_element_param_str_set_str(worksheet.dynamic_element[3].param_str, " --- Diving into the basics of machine learning -- ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[5].param_str, " With a focus on how we can use neural");
 	oh_element_param_str_set_str(worksheet.dynamic_element[6].param_str, " networks to approximate functions");
 	oh_element_param_str_set_str(worksheet.dynamic_element[8].param_str, " We'll start with a simple example: approximating");
@@ -208,9 +212,12 @@ int32_t oh_init() {
 	oh_worksheet_create_element(						// 27 Notes 800
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_800x800,
-		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 255
+	);
 
 	oh_element_set_position(worksheet.dynamic_element + 27, 700, 0);
+	oh_element_param_str_set_str(worksheet.dynamic_element[27].param_str, "Training and Feeding the Neural Network");
 
 	oh_worksheet_create_element(						// 28
 		&worksheet, worksheet.dynamic_element + 27,
@@ -258,9 +265,12 @@ int32_t oh_init() {
 	oh_worksheet_create_element(						// 65 Plot
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_600x600,
-		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 255
+	);
 
 	oh_element_set_position(worksheet.dynamic_element + 65, 0, 700);
+	oh_element_param_str_set_str(worksheet.dynamic_element[65].param_str, "Plot of Leaky ReLU");
 
 	oh_worksheet_create_element(						// 66
 		&worksheet, worksheet.dynamic_element + 65,
@@ -276,12 +286,11 @@ int32_t oh_init() {
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_200x200,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
-		30, 26,
-		0, 0, 0, 255
+		30, 25, 0, 0, 0, 255
 	);
 
 	oh_element_set_position(worksheet.dynamic_element + 67, 700, 900);
-	oh_element_param_str_set_str(worksheet.dynamic_element[67].param_str, "Leaky ReLU");
+	oh_element_param_str_set_str(worksheet.dynamic_element[67].param_str, "ReLU Params");
 
 	oh_worksheet_create_element(						// 68 First knob
 		&worksheet, worksheet.dynamic_element + 67,
@@ -310,9 +319,12 @@ int32_t oh_init() {
 	oh_worksheet_create_element(						// 70 Plot
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_600x600,
-		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 255
+	);
 
 	oh_element_set_position(worksheet.dynamic_element + 70, 1600, 0);
+	oh_element_param_str_set_str(worksheet.dynamic_element[70].param_str, "Plot of target and neural network side by side");
 
 	oh_worksheet_create_element(						// 71
 		&worksheet, worksheet.dynamic_element + 70,
@@ -328,12 +340,12 @@ int32_t oh_init() {
 		&worksheet, NULL,
 		OH_ELEMENT_TEXTURE_WIN_200x200,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
-		30, 26,
+		30, 25,
 		0, 0, 0, 255
 	);
 
 	oh_element_set_position(worksheet.dynamic_element + 72, 1600, 700);
-	oh_element_param_str_set_str(worksheet.dynamic_element[72].param_str, "Learning Rate");
+	oh_element_param_str_set_str(worksheet.dynamic_element[72].param_str, "Learning");
 
 	oh_worksheet_create_element(						// 73 First knob
 		&worksheet, worksheet.dynamic_element + 72,
@@ -367,6 +379,167 @@ int32_t oh_init() {
 	oh_element_param_str_set_str(worksheet.dynamic_element[75].param_str, "reset");
 
 	// static float learn_rate = 0.001f;
+
+	// ---------------------------------------------------------------------------------------------------------------------------------- Hardcode
+
+	oh_worksheet_create_element(						// 76 Hardcode
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_HARDCODE,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
+
+	oh_element_set_position(worksheet.dynamic_element + 76, 1600, -400);
+
+	// ---------------------------------------------------------------------------------------------------------------------------------- Latex
+
+	oh_worksheet_create_element(						// 77 Notes 800
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_800x800,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 255
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 77, -900, 0);
+	oh_element_param_str_set_str(worksheet.dynamic_element[77].param_str, "LaTeX Integration");
+
+	oh_worksheet_create_element(						// 78
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_TEXT_BOX_BIG,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 78, 60, 80);
+
+	for(uint32_t i = 79; i < 115; i ++) {
+		oh_worksheet_create_element(					// 79 - 115
+			&worksheet, worksheet.dynamic_element + 78,
+			OH_ELEMENT_TEXTURE_TEXT_LINE_BIG,
+			OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+			0, 0, 255, 255, 255, 255
+		);
+
+		oh_element_set_snap_offset(worksheet.dynamic_element + i, 0, (i - 79) * 20);
+		oh_element_param_str_set_str(worksheet.dynamic_element[i].param_str, " ");
+	}
+
+	oh_element_param_str_set_str(worksheet.dynamic_element[80].param_str, " LOSS FUNCTION - This function calculates the squared error");
+	oh_element_param_str_set_str(worksheet.dynamic_element[81].param_str, " between the network's output y and the target f(x): ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[86].param_str, " GRADIENT DESCENT COMMON TERM - This is a factor used to scale ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[87].param_str, " each parameter update. It includes the learning rate and the ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[88].param_str, " gradient of the loss function with respect to the output. ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[93].param_str, " OUTPUT WEIGHT UPDATE ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[100].param_str, " HIDDEN BIAS AND WEIGHTS UPDATE ");
+
+	oh_worksheet_create_element(						// 115 Latex
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 115, 46, 130);
+
+	oh_worksheet_create_element(						// 116 Loss
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LOSS,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 116, 200, 165);
+
+	oh_worksheet_create_element(						// 117 Latex
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 117, 46, 270);
+
+	oh_worksheet_create_element(						// 118 Common
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_COMMON,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 118, 200, 305);
+
+	oh_worksheet_create_element(						// 119 Latex
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 119, 46, 365);
+
+	oh_worksheet_create_element(						// 120 OH_ELEMENT_TEXTURE_OW1
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_OW1,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 120, 200, 402);
+
+	oh_worksheet_create_element(						// 121 Latex
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 121, 46, 415);
+
+	oh_worksheet_create_element(						// 122 OH_ELEMENT_TEXTURE_OW2
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_OW2,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 122, 200, 453);
+
+	oh_worksheet_create_element(						// 123 Latex 2
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX2,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 123, 46, 500);
+
+	oh_worksheet_create_element(						// 124 OH_ELEMENT_TEXTURE_BIAS
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_BIAS,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 124, 200, 540);
+
+	oh_worksheet_create_element(						// 125 Latex 2
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX2,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 125, 46, 580);
+
+	oh_worksheet_create_element(						// 126 OH_ELEMENT_TEXTURE_BIAS
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_DLRL,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 126, 200, 610);
+
+	oh_worksheet_create_element(						// 127 Latex 2
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_LATEX2,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 127, 46, 660);
+
+	oh_worksheet_create_element(						// 128 OH_ELEMENT_TEXTURE_BIAS
+		&worksheet, worksheet.dynamic_element + 77,
+		OH_ELEMENT_TEXTURE_HW,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 128, 140, 698);
 
 	// ---------------------------------------------------------------------------------------------------------------------------------- WORKSHEET
 
