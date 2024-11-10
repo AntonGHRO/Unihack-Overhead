@@ -623,7 +623,7 @@ int32_t oh_init() {
 
 	oh_element_set_snap_offset(worksheet.dynamic_element + 136, 60, 100);
 
-	for(uint32_t i = 137; i < 173; i ++) {
+	for(uint32_t i = 137; i < 147; i ++) {
 		oh_worksheet_create_element(					// 137 - 173
 			&worksheet, worksheet.dynamic_element + 136,
 			OH_ELEMENT_TEXTURE_TEXT_LINE_HUGE,
@@ -653,8 +653,18 @@ int32_t oh_init() {
 		0, 70, 0, 0, 0, 255
 	);
 
-	oh_element_set_position(worksheet.dynamic_element + 173, 20 + oh_control_x(), oh_control_y());
-	oh_element_param_str_set_str(worksheet.dynamic_element[173].param_str, "Overhead");
+	oh_element_set_position(worksheet.dynamic_element + 147, 20 + oh_control_x(), oh_control_y());
+	oh_element_param_str_set_str(worksheet.dynamic_element[147].param_str, "Overhead");
+
+	// ---------------------------------------------------------------------------------------------------------------------------------- Arrow
+
+	oh_worksheet_create_element(						// 148 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_ARROW_RIGHT,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 148, 0, -200);
 
 	// ---------------------------------------------------------------------------------------------------------------------------------- WORKSHEET
 
@@ -672,7 +682,7 @@ int32_t oh_event(SDL_Event event) {
 
 // ============================================ UPDATE ============================================
 int32_t oh_update() {
-	oh_element_set_position(worksheet.dynamic_element + 173, 20 + oh_control_x(), oh_control_y());
+	oh_element_set_position(worksheet.dynamic_element + 147, 20 + oh_control_x(), oh_control_y());
 
 	oh_worksheet_render(&worksheet);
 
