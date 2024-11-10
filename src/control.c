@@ -215,7 +215,7 @@ int32_t main(void) {
 	    				if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_KNOB) {
 	    					knob_rotate = 1;
 	    					knob_angle = worksheet->hover->angle;
-	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE || worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE_BIG) {
+	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE || worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE_BIG || worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE_HUGE) {
 	    					write_to = worksheet->hover;
 	    					oh_element_set_transparent(write_to, 0);
 	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TOGGLE_OFF) {

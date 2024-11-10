@@ -43,7 +43,7 @@ int32_t oh_element_init(
 	element->interact.y = 0;
 
 	// Transparency
-	element->transparent = texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_BIG ? 0 : 1;
+	element->transparent = texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_BIG && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_HUGE ? 0 : 1;
 
 	// Texture type
 	element->texture_type = texture_type;
@@ -257,7 +257,7 @@ int32_t oh_element_init_ex(
 	element->interact.y = 0;
 
 	// Transparency
-	element->transparent = texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_BIG ? 0 : 1;
+	element->transparent = texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_BIG && texture_type != OH_ELEMENT_TEXTURE_TEXT_LINE_HUGE ? 0 : 1;
 
 	// Texture type
 	element->texture_type = texture_type;

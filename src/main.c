@@ -595,6 +595,63 @@ int32_t oh_init() {
 	oh_element_set_snap_offset(worksheet.dynamic_element + 133, 34, 65);
 	oh_element_param_str_set_str(worksheet.dynamic_element[133].param_str, "input");
 
+	// ---------------------------------------------------------------------------------------------------------------------------------- Map
+
+	oh_worksheet_create_element(						// 134 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_WIN_1200x670,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		30, 25, 0, 0, 0, 255
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 134, -1300, 1100);
+	oh_element_param_str_set_str(worksheet.dynamic_element[134].param_str, "Knowledge Map Concept");
+
+	oh_worksheet_create_element(						// 135 Plot
+		&worksheet, worksheet.dynamic_element + 134,
+		OH_ELEMENT_TEXTURE_MAP,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 135, 200, 300);
+
+	oh_worksheet_create_element(						// 136
+		&worksheet, worksheet.dynamic_element + 134,
+		OH_ELEMENT_TEXTURE_TEXT_BOX_HUGE,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 136, 60, 100);
+
+	for(uint32_t i = 137; i < 173; i ++) {
+		oh_worksheet_create_element(					// 137 - 173
+			&worksheet, worksheet.dynamic_element + 136,
+			OH_ELEMENT_TEXTURE_TEXT_LINE_HUGE,
+			OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+			0, 0, 255, 255, 255, 255
+		);
+
+		oh_element_set_snap_offset(worksheet.dynamic_element + i, 0, (i - 137) * 20);
+		oh_element_param_str_set_str(worksheet.dynamic_element[i].param_str, " ");
+	}
+
+	oh_element_param_str_set_str(worksheet.dynamic_element[138].param_str, " Overhead is a powerful app designed to simplify complex concepts and enhance ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[139].param_str, " intuitive understanding through dynamic illustrations and animations.");
+	oh_element_param_str_set_str(worksheet.dynamic_element[141].param_str, " With Overhead, learning becomes an interactive experience where users can dive into detailed visual scenarios, ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[142].param_str, " manipulating elements to see how changes affect the system in real time. ");
+
+	// ---------------------------------------------------------------------------------------------------------------------------------- Map
+
+	oh_worksheet_create_element(						// 173 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_OVERHEAD,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
+		0, 70, 0, 0, 0, 255
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 173, 20 + oh_control_x(), oh_control_y());
+	oh_element_param_str_set_str(worksheet.dynamic_element[173].param_str, "Overhead");
+
 	// ---------------------------------------------------------------------------------------------------------------------------------- WORKSHEET
 
 	// Set worksheet to work on
@@ -611,6 +668,8 @@ int32_t oh_event(SDL_Event event) {
 
 // ============================================ UPDATE ============================================
 int32_t oh_update() {
+	oh_element_set_position(worksheet.dynamic_element + 173, 20 + oh_control_x(), oh_control_y());
+
 	oh_worksheet_render(&worksheet);
 
 	SDL_Rect rect = {
