@@ -63,4 +63,8 @@ int32_t oh_control_set_worksheet(oh_worksheet *ws);
 
 int32_t oh_control_worksheet_update_states();
 
+void oh_control_set_knob_sen(float sen);
+
+int32_t oh_control_get_toggle();
+
 #endif

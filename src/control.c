@@ -66,6 +66,20 @@ uint8_t oh_color_mod_b = 255;
 
 static oh_element *write_to = NULL;
 
+static float knob_sen = 1.0;
+
+static int32_t toggle = 0;
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+void oh_control_set_knob_sen(float sen) {
+	knob_sen = sen;
+}
+
+int32_t oh_control_get_toggle() {
+	return toggle;
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 void oh_control_set_scene(
@@ -199,6 +213,14 @@ int32_t main(void) {
 	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE || worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TEXT_LINE_BIG) {
 	    					write_to = worksheet->hover;
 	    					oh_element_set_transparent(write_to, 0);
+	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TOGGLE_OFF) {
+	    					toggle = 1;
+	    					worksheet->hover->texture = oh_element_texture(OH_ELEMENT_TEXTURE_TOGGLE_ON);
+	    					worksheet->hover->texture_type = OH_ELEMENT_TEXTURE_TOGGLE_ON;
+	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_TOGGLE_ON) {
+	    					toggle = 0;
+	    					worksheet->hover->texture = oh_element_texture(OH_ELEMENT_TEXTURE_TOGGLE_OFF);
+	    					worksheet->hover->texture_type = OH_ELEMENT_TEXTURE_TOGGLE_OFF;
 	    				}
 	    			}
 	    		}
@@ -232,7 +254,7 @@ int32_t main(void) {
 	    				oh_cursor_y + oh_y - worksheet->hover->interact.y - (last_y + oh_y - last_y_element)
 					);
 	    		} else if(knob_rotate && worksheet->hover != NULL) {
-	    			oh_element_set_angle(worksheet->hover, knob_angle + (float)((oh_cursor_x - last_x) / 2));
+	    			oh_element_set_angle(worksheet->hover, knob_angle + knob_sen * (float)(oh_cursor_x - last_x));
 
 	    			if(worksheet->hover->param != NULL) {
 	    				oh_element_param_set_val(worksheet->hover->param, worksheet->hover->angle * 0.1);
