@@ -613,7 +613,7 @@ int32_t oh_init() {
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
 	);
 
-	oh_element_set_snap_offset(worksheet.dynamic_element + 135, 200, 300);
+	oh_element_set_snap_offset(worksheet.dynamic_element + 135, 200, 320);
 
 	oh_worksheet_create_element(						// 136
 		&worksheet, worksheet.dynamic_element + 134,
@@ -635,12 +635,11 @@ int32_t oh_init() {
 		oh_element_param_str_set_str(worksheet.dynamic_element[i].param_str, " ");
 	}
 
-	oh_element_param_str_set_str(worksheet.dynamic_element[137].param_str, " Overhead is a powerful app designed to simplify complex concepts and enhance ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[138].param_str, " intuitive understanding through dynamic illustrations and animations.");
-	oh_element_param_str_set_str(worksheet.dynamic_element[139].param_str, " With Overhead, learning becomes an interactive experience where users can dive into detailed visual scenarios, ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[140].param_str, " manipulating elements to see how changes affect the system in real time. ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[141].param_str, " A standout feature of Overhead is its Knowledge Map-a customizable, interconnected network of concepts that ");
-	oh_element_param_str_set_str(worksheet.dynamic_element[142].param_str, " visually guides users through their learning journey. ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[138].param_str, " Overhead is a powerful app designed to simplify complex concepts and enhance intuitive understanding");
+	oh_element_param_str_set_str(worksheet.dynamic_element[139].param_str, " through dynamic illustrations and animations. With Overhead, learning becomes an interactive experience");
+	oh_element_param_str_set_str(worksheet.dynamic_element[140].param_str, " where users can dive into detailed visual scenarios, manipulating elements to see how changes affect");
+	oh_element_param_str_set_str(worksheet.dynamic_element[141].param_str, " the system in real time. A standout feature of Overhead is its Knowledge Map-a customizable, ");
+	oh_element_param_str_set_str(worksheet.dynamic_element[142].param_str, " interconnected network of concepts that visually guides users through their learning journey. ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[144].param_str, " Overhead is not just a tool; it's a guided journey through complex topics, ");
 	oh_element_param_str_set_str(worksheet.dynamic_element[145].param_str, " empowering users to build lasting knowledge with visual insights and hands-on practice. ");
 
