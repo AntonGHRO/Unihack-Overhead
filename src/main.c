@@ -21,12 +21,14 @@ extern float oh_control_set_knob_sen(float sen);
 extern int32_t oh_control_get_toggle();
 
 // ----------------------------------- LEAKY DEMO
+static int32_t toggle_reset = 0;
+
 static float leaky_alpha = 0.0f;
 static float leaky_bias = 0.0f;
 static float LeakyReLU(float x) {
-	x += leaky_bias;
+	x += 0.1 * leaky_bias;
 	if (x > 0) return x;
-	return leaky_alpha * x;
+	return 0.1 * leaky_alpha * x;
 }
 
 // ----------------------------------- FUNCTION APROX DEMO
@@ -47,7 +49,8 @@ float randf(float min, float max) {
 }
 
 static float target(float x) {
-    return (1 / (1 + powf(2.71828182846f, -x)));
+    // return (1 / (1 + powf(2.71828182846f, -x)));
+    return 0.1 * x * x;
 }
 
 static float lrelu(float x) {
@@ -72,7 +75,7 @@ static float error(float x) {
 }
 
 void descent(float xt) {
-    float common = 0.0001f * learn_rate * 2 * (feed(xt) - target(xt));
+    float common = 0.001f * learn_rate * 2 * (feed(xt) - target(xt));
 
     float hw_aux;
     float b_aux;
@@ -347,21 +350,21 @@ int32_t oh_init() {
 		&worksheet, worksheet.dynamic_element + 72,
 		OH_ELEMENT_TEXTURE_TOGGLE_OFF,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
-		14, 50, 0, 0, 0, 255
+		14, 40, 0, 0, 0, 255
 	);
 
-	oh_element_set_snap_offset(worksheet.dynamic_element + 74, 130, 100);
+	oh_element_set_snap_offset(worksheet.dynamic_element + 74, 130, 70);
 	oh_element_param_str_set_str(worksheet.dynamic_element[74].param_str, "learn");
 
 	oh_worksheet_create_element(						// 75 Toggle reset
 		&worksheet, worksheet.dynamic_element + 72,
 		OH_ELEMENT_TEXTURE_TOGGLE_OFF,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 1,
-		14, 50, 0, 0, 0, 255
+		14, 40, 0, 0, 0, 255
 	);
 
-	oh_element_set_snap_offset(worksheet.dynamic_element + 74, 130, 100);
-	oh_element_param_str_set_str(worksheet.dynamic_element[74].param_str, "learn");
+	oh_element_set_snap_offset(worksheet.dynamic_element + 75, 130, 140);
+	oh_element_param_str_set_str(worksheet.dynamic_element[75].param_str, "reset");
 
 	// static float learn_rate = 0.001f;
 
@@ -411,6 +414,19 @@ int32_t oh_update() {
 		for(uint32_t i = 0; i < (uint32_t)((range_max_x - range_mix_x) / step); i ++) {
 	        descent(range_mix_x + ((float)i) * step);
 	    }
+
+	    toggle_reset = 0;
+	}
+
+	if(!oh_control_get_toggle() && toggle_reset == 0) {
+		// Randomize params
+	    for(unsigned i = 0; i < rank; i ++) {
+	        ow[i] = randf(-1.0f, +1.0f);
+	        b[i] = randf(-0.5f, +0.5f);
+	        hw[i] = randf(-1.0f, +1.0f);
+	    }
+
+	    toggle_reset = 1;
 	}
 
 	return OH_TRUE;
