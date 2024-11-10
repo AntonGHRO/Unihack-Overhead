@@ -40,6 +40,9 @@ static const char *path[OH_ELEMENT_TEXTURE_COUNT] = {
 	"./resources/hw.png",
 	"./resources/latex.png",
 	"./resources/latex2.png",
+	"./resources/button_off.png",
+	"./resources/button_on.png",
+	"./resources/function.png",
 };
 
 // ---------------------------------------------------------------------

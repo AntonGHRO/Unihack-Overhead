@@ -69,6 +69,7 @@ static oh_element *write_to = NULL;
 static float knob_sen = 1.0;
 
 static int32_t toggle = 0;
+static int32_t button = 0;
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -78,6 +79,10 @@ void oh_control_set_knob_sen(float sen) {
 
 int32_t oh_control_get_toggle() {
 	return toggle;
+}
+
+int32_t oh_control_get_button() {
+	return button;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------
@@ -221,6 +226,14 @@ int32_t main(void) {
 	    					toggle = 0;
 	    					worksheet->hover->texture = oh_element_texture(OH_ELEMENT_TEXTURE_TOGGLE_OFF);
 	    					worksheet->hover->texture_type = OH_ELEMENT_TEXTURE_TOGGLE_OFF;
+	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_BUTTON_OFF) {
+	    					button = 1;
+	    					worksheet->hover->texture = oh_element_texture(OH_ELEMENT_TEXTURE_BUTTON_ON);
+	    					worksheet->hover->texture_type = OH_ELEMENT_TEXTURE_BUTTON_ON;
+	    				} else if(worksheet->hover->texture_type == OH_ELEMENT_TEXTURE_BUTTON_ON) {
+	    					button = 0;
+	    					worksheet->hover->texture = oh_element_texture(OH_ELEMENT_TEXTURE_BUTTON_OFF);
+	    					worksheet->hover->texture_type = OH_ELEMENT_TEXTURE_BUTTON_OFF;
 	    				}
 	    			}
 	    		}

@@ -1,4 +1,5 @@
 #include "../include/dependencies.h"
+#include <SDL2/SDL_render.h>
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 // Font
@@ -120,6 +121,8 @@ int32_t oh_dependencies_init() {
 	if(SDL_SetRenderDrawBlendMode(oh_renderer, SDL_BLENDMODE_BLEND) == -1) {
 		oh_log(OH_LOG_WARN, "oh_dependencies_init(): Blend mode failed to initialize:\n\t%s", SDL_GetError());
 	}
+
+	// SDL_RenderSetLogicalSize(oh_renderer, 2560, 1600);
 
 	// Success
 	oh_log(OH_LOG_INFO, "oh_dependencies_init(): Window successfully initialized");

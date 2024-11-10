@@ -19,6 +19,7 @@ extern int32_t oh_control_cursor_y();
 extern int32_t oh_control_set_worksheet(oh_worksheet *ws);
 extern float oh_control_set_knob_sen(float sen);
 extern int32_t oh_control_get_toggle();
+extern int32_t oh_control_get_button();
 
 // ----------------------------------- LEAKY DEMO
 static int32_t toggle_reset = 0;
@@ -561,6 +562,39 @@ int32_t oh_init() {
 
 	oh_element_set_snap_offset(worksheet.dynamic_element + 130, 66, 86);
 
+	// ---------------------------------------------------------------------------------------------------------------------------------- Target + button
+
+	oh_worksheet_create_element(						// 131 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_FUNCTION,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
+		275, 35, OH_ELEMENT_PARAM_MODE_NORMAL, 255, 255, 255, 255,
+		98, 35, 0, 0, 0, 255
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 131, -900, 900);
+	oh_element_param_set_val(worksheet.dynamic_element[131].param, 0.0);
+	oh_element_param_str_set_str(worksheet.dynamic_element[131].param_str, "f(x)= 0.1 * x^2");
+
+	oh_worksheet_create_element(						// 132
+		&worksheet, worksheet.dynamic_element + 131,
+		OH_ELEMENT_TEXTURE_BUTTON_OFF,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 132, 34, 14);
+
+	oh_worksheet_create_element(						// 133 Knob
+		&worksheet, worksheet.dynamic_element + 131,
+		OH_ELEMENT_TEXTURE_KNOB,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 1, 1,
+		12, 55, OH_ELEMENT_PARAM_MODE_NORMAL, 255, 255, 255, 255,
+		5, 72, 255, 255, 255, 255
+	);
+
+	oh_element_set_snap_offset(worksheet.dynamic_element + 133, 34, 65);
+	oh_element_param_str_set_str(worksheet.dynamic_element[133].param_str, "input");
+
 	// ---------------------------------------------------------------------------------------------------------------------------------- WORKSHEET
 
 	// Set worksheet to work on
@@ -625,6 +659,10 @@ int32_t oh_update() {
 	    }
 
 	    toggle_reset = 1;
+	}
+
+	if(oh_control_get_button()) {
+		oh_element_param_set_val(worksheet.dynamic_element[131].param, target(worksheet.dynamic_element[133].param->data));
 	}
 
 	return OH_TRUE;
