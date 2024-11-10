@@ -388,7 +388,7 @@ int32_t oh_init() {
 		OH_ELEMENT_TEXTURE_HARDCODE,
 		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0);
 
-	oh_element_set_position(worksheet.dynamic_element + 76, 1600, -400);
+	oh_element_set_position(worksheet.dynamic_element + 76, 1600, -600);
 
 	// ---------------------------------------------------------------------------------------------------------------------------------- Latex
 
@@ -665,6 +665,30 @@ int32_t oh_init() {
 	);
 
 	oh_element_set_position(worksheet.dynamic_element + 148, 0, -200);
+
+	oh_worksheet_create_element(						// 149 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_ARROW_RIGHT,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 149, 0, -250);
+
+	oh_worksheet_create_element(						// 150 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_ARROW_RIGHT,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 150, 0, -300);
+
+	oh_worksheet_create_element(						// 151 Plot
+		&worksheet, NULL,
+		OH_ELEMENT_TEXTURE_ARROW_RIGHT,
+		OH_ELEMENT_ACTIVITY_DYNAMIC, 0, 0
+	);
+
+	oh_element_set_position(worksheet.dynamic_element + 151, 0, -350);
 
 	// ---------------------------------------------------------------------------------------------------------------------------------- WORKSHEET
 
