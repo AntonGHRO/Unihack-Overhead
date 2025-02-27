@@ -1,6 +1,5 @@
 # Unihack-Overhead
-Designed to simplify complex concepts and enhance intuitive understanding through dynamic illustrations and animations.
-Developed during Romania Unihack.
+* Enhance intuitive understanding through dynamic illustrations and animations
 
 ---
 ![WhatsApp Image 2025-02-27 at 13 29 40](https://github.com/user-attachments/assets/1d782d85-76d3-4b0a-869f-e12a7e7eeb26)
